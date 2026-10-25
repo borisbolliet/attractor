@@ -13,7 +13,7 @@ def rk4_step(rhs, t, y, h):
     k2 = rhs(t + h / 2, y + h / 2 * k1)
     k3 = rhs(t + h / 2, y + h / 2 * k2)
     k4 = rhs(t + h, y + h * k3)
-    y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+    y = y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
     return y
 
 
