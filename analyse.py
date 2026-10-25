@@ -10,13 +10,13 @@ from pathlib import Path
 import numpy as np
 from dotenv import load_dotenv
 
+from cycles import cycle_period
+
 load_dotenv()
 DATA = Path(os.environ.get("DATA_PATH", "data"))
 RESULTS = Path(os.environ.get("RESULTS_PATH", "results"))
 os.environ.setdefault("MPLBACKEND", "Agg")
 import matplotlib.pyplot as plt  # noqa: E402  (after the backend is set)
-
-MIN_GAP = 3.0  # minimum spacing between two peaks, in days
 
 
 def load_run(path):
@@ -25,29 +25,6 @@ def load_run(path):
     t, algae = d[:, 0], d[:, 1]
     keep = ~np.isnan(algae)
     return t[keep], algae[keep]
-
-
-def peaks(t, algae):
-    """Indices of the local maxima above the mean density, at least MIN_GAP days apart."""
-    level = algae.mean()
-    found = []
-    for i in range(1, len(algae) - 1):
-        if not (algae[i - 1] < algae[i] >= algae[i + 1] and algae[i] > level):
-            continue
-        if found and t[i] - t[found[-1]] < MIN_GAP:
-            if algae[i] > algae[found[-1]]:
-                found[-1] = i
-            continue
-        found.append(i)
-    return np.array(found, dtype=int)
-
-
-def cycle_period(t, algae):
-    """Mean peak-to-peak spacing in days, and the peak times."""
-    p = peaks(t, algae)
-    if len(p) < 3:
-        return np.nan, t[p]
-    return (t[p[-1]] - t[p[0]]) / (len(p) - 1), t[p]
 
 
 def main():

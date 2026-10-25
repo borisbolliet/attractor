@@ -1,0 +1,12 @@
+Lecture 9, a function is an object: bound to a second name, passed as an argument, inspected.
+    python -m doctest -v sessions/lecture09/functions.txt
+
+>>> def square(x): return x * x
+...
+>>> def apply(f, v): return f(v)
+...
+>>> g = square
+>>> apply(g, 3), g is square, g.__name__
+(9, True, 'square')
+>>> square.__defaults__, square.__code__.co_varnames
+(None, ('x',))

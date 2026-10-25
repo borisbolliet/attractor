@@ -1,10 +1,20 @@
 # attractor
 
-Running example of Lecture 4, "Reproducible Python environments", of the
-C1 Research Computing course (MPhil in Data Intensive Science, University of
-Cambridge). The project measures the cycle period of ten chemostat
+Running example of the C1 Research Computing course (MPhil in Data Intensive
+Science, University of Cambridge), from Lecture 4, "Reproducible Python
+environments", onwards. The project measures the cycle period of ten chemostat
 predator-prey experiments and is small enough to be rebuilt from scratch in a
 few minutes on a laptop or on a Linux workstation.
+
+## Lecture states
+
+The state of the project at each lecture is a tag, checked out with
+`git switch --detach <tag>`; `git switch main` returns to the latest state.
+
+| Tag | State |
+|---|---|
+| `lecture-09-start` | start of Lecture 9: model, integrators, driver, puzzles and exercises; `rk4_step` writes the new state into its argument |
+| `lecture-09` | end of Lecture 9: `rk4_step` rebinds `y` instead (`git diff lecture-09-start lecture-09`) |
 
 ## Setup
 
@@ -50,7 +60,7 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
    `.venv/`, is a build product and is not committed.
 2. **Configuration.** `.env.example` lists every variable the scripts read
    (`DATA_PATH`, `RESULTS_PATH`, `OMP_NUM_THREADS`, `MPLBACKEND`, `LLM_BASE_URL`,
-   `LLM_API_KEY`, `LLM_MODEL`) with a default and a one-line comment.
+   `LLM_API_KEY`, `LLM_MODEL`, `ATTRACTOR_H`) with a default and a one-line comment.
    `setup_env.sh` copies it to `.env`, which is ignored by git and holds the
    local values; the scripts read `.env` with `python-dotenv`. A variable set
    in the shell takes precedence over `.env`, so
@@ -70,6 +80,13 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 | `data/C1.csv` ... `data/C10.csv` | the ten runs; columns: time (days), algae (10^6 cells/ml), rotifers (animals/ml), egg ratio, eggs, dead animals, medium |
 | `analyse.py` | period of every run from the peaks of the algae density; writes `results/periods.csv` and `results/periods.png` |
 | `period.py` | the same computation for one run: `python period.py data/C9.csv` |
+| `models.py` | Lotka–Volterra and Rosenzweig–MacArthur right-hand sides, built by factory functions; the chemostat parameters `CHEMOSTAT` |
+| `integrators.py` | Euler and RK4 steps and `integrate`, the fixed-step loop |
+| `cycles.py` | peak finder and cycle period, used by `analyse.py` and `simulate.py` |
+| `simulate.py` | integrates the chemostat model, prints its period and writes `results/simulated.png`; step size from `ATTRACTOR_H` |
+| `puzzles/` | short scripts on names, calls, scopes, closures and imports (Lecture 9) |
+| `exercises/lecture09/` | scripts that check the answers to the exercises of Lecture 9 |
+| `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, NumPy version and location, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |
 | `requirements.txt` | package specification: the four imported packages and ipykernel |

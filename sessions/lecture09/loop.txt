@@ -1,0 +1,14 @@
+Lecture 9, aliasing in a loop that stores its state at every step.
+    python -m doctest -v sessions/lecture09/loop.txt
+
+>>> import numpy as np
+>>> state = np.zeros(2)
+>>> rows = []
+>>> for k in range(3):
+...     state += 1            # writes into the one array
+...     rows.append(state)    # appends that array again
+...
+>>> rows
+[array([3., 3.]), array([3., 3.]), array([3., 3.])]
+>>> len({id(r) for r in rows})
+1

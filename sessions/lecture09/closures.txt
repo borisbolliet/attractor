@@ -1,0 +1,22 @@
+Lecture 9, closures: the cells of two functions made by one factory, and lambdas made in a loop.
+    python -m doctest -v sessions/lecture09/closures.txt
+
+>>> def make_adder(n):
+...     def add(x): return x + n
+...     def zero(x): return 0 * x
+...     return add, zero
+...
+>>> add3, zero = make_adder(3)
+>>> add3(4), add3.__closure__[0].cell_contents, zero.__closure__
+(7, 3, None)
+>>> add5, _ = make_adder(5)
+>>> add5.__code__ is add3.__code__, add5.__closure__[0] is add3.__closure__[0]
+(True, False)
+
+>>> rates = [lambda x: r * x for r in (0.5, 0.8, 1.1)]
+>>> rates[0].__code__.co_freevars
+('r',)
+>>> len({id(f.__closure__[0]) for f in rates})
+1
+>>> [f.__closure__[0].cell_contents for f in rates]
+[1.1, 1.1, 1.1]

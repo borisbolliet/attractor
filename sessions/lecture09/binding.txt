@@ -1,0 +1,9 @@
+Lecture 9, names and objects. Run from the project root:
+    python -m doctest -v sessions/lecture09/binding.txt
+
+>>> a = b = []
+>>> a is b
+True
+>>> c, d = [], []
+>>> c is d
+False

@@ -1,0 +1,15 @@
+Lecture 9, aliases of a mutable and of an immutable object.
+    python -m doctest -v sessions/lecture09/aliases.txt
+
+>>> p = {"a": 0.8}
+>>> q = p
+>>> q["a"] = 0.5
+>>> p
+{'a': 0.5}
+>>> t = (0.8, 0.08)
+>>> u = t
+>>> u is t
+True
+>>> u += (0.77,)
+>>> t, u is t
+((0.8, 0.08), False)

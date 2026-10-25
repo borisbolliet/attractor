@@ -1,0 +1,11 @@
+Lecture 9, identity at the prompt: each statement is compiled on its own.
+    python -m doctest -v sessions/lecture09/identity.txt
+
+>>> p = 1000
+>>> q = 1000
+>>> p is q
+False
+>>> x = 256
+>>> y = 256
+>>> x is y
+True

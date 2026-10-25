@@ -1,0 +1,25 @@
+Lecture 9, views of an array and of a list.
+    python -m doctest -v sessions/lecture09/views.txt
+
+>>> import numpy as np
+>>> a = np.arange(6.0)
+>>> v = a[::2]
+>>> v.base is a
+True
+>>> v[0] = -1
+>>> a
+array([-1.,  1.,  2.,  3.,  4.,  5.])
+>>> c = a[1:4]
+>>> c is v, np.shares_memory(c, v)
+(False, True)
+>>> np.shares_memory(a.copy(), a)
+False
+
+>>> l = [1.5, 8.0, 2.0]
+>>> b = np.array(l)
+>>> m = l[::-1]; m[0] = 0; l
+[1.5, 8.0, 2.0]
+>>> w = b[::-1]; w[0] = 0; b
+array([1.5, 8. , 0. ])
+>>> m is l, w.base is b
+(False, True)

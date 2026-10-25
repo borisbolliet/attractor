@@ -1,0 +1,11 @@
+Lecture 9, one module object behind every import of a name, and a name bound by a from import.
+    python -m doctest -v sessions/lecture09/modules.txt
+
+>>> import math, importlib, sys
+>>> importlib.import_module("math") is math is sys.modules["math"]
+True
+>>> from math import pi
+>>> math.pi = 3
+>>> pi, math.pi
+(3.141592653589793, 3)
+>>> math.pi = pi

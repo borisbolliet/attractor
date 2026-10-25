@@ -1,0 +1,8 @@
+Lecture 9, a comprehension is a scope of its own.
+    python -m doctest -v sessions/lecture09/scopes.txt
+
+>>> h = 0.05
+>>> [h for h in (0.1, 0.2)]
+[0.1, 0.2]
+>>> h
+0.05
