@@ -1,0 +1,16 @@
+Lecture 10, the registry of model factories, filled by the import of models. Run from the project root:
+    python -m doctest -v sessions/lecture10/registry.txt
+
+>>> from tools import REGISTRY, make_model
+>>> import models
+>>> sorted(REGISTRY)
+['lotka_volterra', 'rosenzweig_macarthur']
+>>> REGISTRY is models.REGISTRY
+True
+>>> rhs = make_model("lotka_volterra", **models.CHEMOSTAT)
+>>> rhs.__qualname__
+'make_lotka_volterra.<locals>.rhs'
+>>> make_model("goodwin")
+Traceback (most recent call last):
+    ...
+KeyError: 'goodwin'

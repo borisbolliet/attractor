@@ -1,0 +1,15 @@
+Lecture 10, the counting wrapper of tools.py on the right-hand side of the chemostat model, in the long spelling of a decoration. Run from the project root:
+    python -m doctest -v sessions/lecture10/counted_rhs.txt
+
+>>> import numpy as np
+>>> from integrators import integrate, rk4_step
+>>> from models import CHEMOSTAT, make_lotka_volterra
+>>> from tools import counted
+>>> rhs = make_lotka_volterra(**CHEMOSTAT)
+>>> rhs = counted(rhs)
+>>> t, y = integrate(rk4_step, rhs, np.array([1.5, 8.0]), 0.0, 40.0, 0.05)
+>>> y.shape, rhs.calls
+((801, 2), 3200)
+>>> rhs.reset()
+>>> rhs(0.0, np.array([1.0, 10.0])), rhs.calls
+(array([0., 0.]), 1)

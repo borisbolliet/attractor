@@ -1,0 +1,12 @@
+Lecture 10, lru_cache as a decorator factory, with an argument and bare. Run from the project root:
+    python -m doctest -v sessions/lecture10/lru_factory.txt
+
+>>> import functools
+>>> @functools.lru_cache(maxsize=32)
+... def square(n): return n * n
+...
+>>> @functools.lru_cache
+... def cube(n): return n ** 3
+...
+>>> square.cache_info().maxsize, cube.cache_info().maxsize
+(32, 128)

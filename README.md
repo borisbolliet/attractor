@@ -15,13 +15,14 @@ The state of the project at each lecture is a tag, checked out with
 |---|---|
 | `lecture-09-start` | start of Lecture 9: model, integrators, driver, puzzles and exercises; `rk4_step` writes the new state into its argument |
 | `lecture-09` | end of Lecture 9: `rk4_step` rebinds `y` instead (`git diff lecture-09-start lecture-09`) |
+| `lecture-10` | end of Lecture 10: decorators in `tools.py`, a registry of models, experiments and exercises |
 
 ## Setup
 
 ```bash
 git clone https://github.com/borisbolliet/attractor.git ~/GitHub/attractor
 cd ~/GitHub/attractor
-source setup_env.sh          # Python 3.12 venv, pinned packages, .env, Jupyter kernel attractor-py312
+source setup_env.sh          # Python 3.13 venv, pinned packages, .env, Jupyter kernel attractor-py313
 python analyse.py            # table of periods, results/periods.csv, results/periods.png
 python ask_llm.py            # optional: two sentences about the table from a language model
 ```
@@ -29,16 +30,16 @@ python ask_llm.py            # optional: two sentences about the table from a la
 The clone goes to `~/GitHub/attractor` so that it does not collide with the
 `~/attractor` directory of the first lectures of the course. `source
 setup_env.sh` typically takes 10 to 15 s with a warm pip cache (lecture
-laptop, Python 3.12.12; workstation, Python 3.12.3). A second `source
+laptop, Python 3.13.11). A second `source
 setup_env.sh` only prints the environment report. The script must be sourced:
 run as `./setup_env.sh` it stops with a one-line message, because a script
 that runs in a child shell cannot activate a venv in the calling shell.
 
-Python 3.12 is expected as `python3.12`; another interpreter is selected with
-`PYTHON=/path/to/python3.12 source setup_env.sh`. Obtaining 3.12: macOS,
-`brew install python@3.12`; Ubuntu 24.04, `sudo apt install python3.12-venv`;
-any system, `uv python install 3.12` then
-`PYTHON="$(uv python find 3.12)" source setup_env.sh`.
+Python 3.13 is expected as `python3.13`; another interpreter is selected with
+`PYTHON=/path/to/python3.13 source setup_env.sh`. Obtaining 3.13: macOS,
+`brew install python@3.13`; any system, `uv python install 3.13` then
+`PYTHON="$(uv python find 3.13)" source setup_env.sh`. A `.venv` built with
+another Python version, such as the 3.12 one of Lectures 4 to 9, is rebuilt.
 
 `ask_llm.py` needs an OpenAI-compatible chat endpoint in `LLM_BASE_URL`: the
 course endpoint given in the lecture, a local `llama-server` or Ollama
@@ -53,8 +54,8 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 
 1. **Interpreter and packages.** `requirements.txt` gives package
    constraints (`numpy>=1.26`, `matplotlib>=3.8`, ...). `requirements-lock.txt`
-   is a `pip freeze` snapshot of 52 installed distributions from a Python
-   3.12.12 macOS arm64 environment, created on 2026-10-14. `pip freeze`
+   is a `pip freeze` snapshot of 53 installed distributions from a Python
+   3.13.11 macOS arm64 environment, created on 2026-10-29. `pip freeze`
    reports installed versions; it does not solve requirements or create a
    cross-platform lockfile. `setup_env.sh` installs the snapshot. The venv,
    `.venv/`, is a build product and is not committed.
@@ -67,10 +68,10 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
    `RESULTS_PATH=/tmp/out python analyse.py` writes elsewhere without editing
    the file.
 3. **Setup script.** `setup_env.sh` uses these files to create a
-   working shell: it creates `.venv` with `python3.12`, activates it, installs
+   working shell: it creates `.venv` with `python3.13`, activates it, installs
    the package snapshot, creates `.env` if missing, exports its variables
    (`set -a; . ./.env; set +a`), registers the Jupyter kernel
-   `attractor-py312` (display name `Python (attractor 3.12)`, distinct from
+   `attractor-py313` (display name `Python (attractor 3.13)`, distinct from
    the `attractor` kernel of the first lectures) and prints `check_env.py`.
 
 ## Files
@@ -80,17 +81,23 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 | `data/C1.csv` ... `data/C10.csv` | the ten runs; columns: time (days), algae (10^6 cells/ml), rotifers (animals/ml), egg ratio, eggs, dead animals, medium |
 | `analyse.py` | period of every run from the peaks of the algae density; writes `results/periods.csv` and `results/periods.png` |
 | `period.py` | the same computation for one run: `python period.py data/C9.csv` |
-| `models.py` | Lotka–Volterra and Rosenzweig–MacArthur right-hand sides, built by factory functions; the chemostat parameters `CHEMOSTAT` |
+| `models.py` | Lotka–Volterra and Rosenzweig–MacArthur right-hand sides, built by factory functions; the chemostat parameters `CHEMOSTAT`; the factories are registered by name |
 | `integrators.py` | Euler and RK4 steps and `integrate`, the fixed-step loop |
 | `cycles.py` | peak finder and cycle period, used by `analyse.py` and `simulate.py` |
 | `simulate.py` | integrates the chemostat model, prints its period and writes `results/simulated.png`; step size from `ATTRACTOR_H` |
 | `puzzles/` | short scripts on names, calls, scopes, closures and imports (Lecture 9) |
 | `exercises/lecture09/` | scripts that check the answers to the exercises of Lecture 9 |
+| `tools.py` | decorators `counted`, `timed` and `register`, and `REGISTRY`, the model factories by name |
+| `experiments/` | scripts run from the project root as `python -m experiments.<name>` (Lectures 10 and 11) |
+| `exercises/lecture10/` | scripts that check the answers to the exercises of Lecture 10 |
+| `sessions/lecture10/` | interpreter sessions of the Lecture 10 notes, checked with `python -m doctest sessions/lecture10/*.txt` |
+| `lecture10.ipynb` | the notebook of Lecture 10, run with the kernel `Python (attractor 3.13)` |
+| `lecture10-mine.ipynb` | the notebook of Lecture 10 as run in the lecture, with its outputs |
 | `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, NumPy version and location, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |
 | `requirements.txt` | package specification: the four imported packages and ipykernel |
-| `requirements-lock.txt` | `pip freeze` snapshot, Python 3.12.12 on macOS arm64 |
+| `requirements-lock.txt` | `pip freeze` snapshot, Python 3.13.11 on macOS arm64 (Python 3.12.12 up to `lecture-09`) |
 | `.env.example` | configuration template; copied to `.env` by `setup_env.sh` |
 | `setup_env.sh` | one-step setup, to be sourced |
 | `.gitignore` | `.venv*/`, `.env`, `results*/`, `__pycache__/`, `.ipynb_checkpoints/` (also `.venv313` and `results-np1`, `results-np2` of the lecture) |
@@ -122,6 +129,10 @@ under NumPy 2.5.4. The data are loaded as `float32`; the period is a
 convert to the same binary value, 8.059374809265137; NumPy 2 writes the
 shortest decimal that round-trips to that value. The 2024 output is
 reproduced with Python 3.12 and the package snapshot.
+
+From `lecture-10` the project runs on Python 3.13 with NumPy 2, from a new
+snapshot of `requirements.txt`. The 2024 snapshot stays at the tags up to
+`lecture-09`.
 
 ## Method
 

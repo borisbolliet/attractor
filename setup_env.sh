@@ -4,8 +4,8 @@
 #
 # Usage, from the repository root, in bash or zsh:
 #     source setup_env.sh
-# Interpreter: python3.12 by default; PYTHON=/path/to/python3.12 source setup_env.sh
-# overrides it. Running the script twice does nothing new and prints only the report.
+# Interpreter: python3.13 by default; PYTHON=/path/to/python3.13 source setup_env.sh
+# overrides it. A .venv built with another Python version is rebuilt. Running the script twice does nothing new and prints only the report.
 # After editing .env, source the script again: the shell keeps the variables it exported.
 
 # Sourced or run: only a sourced script can activate the venv in the calling shell.
@@ -22,13 +22,25 @@ elif [ -n "${BASH_VERSION:-}" ]; then
 fi
 
 setup_env() {
-    local python="${PYTHON:-python3.12}"
+    local python="${PYTHON:-python3.13}"
 
     [ -f requirements-lock.txt ] || { echo "setup_env.sh: run it from the repository root"; return 1; }
 
+    command -v "$python" >/dev/null 2>&1 \
+        || { echo "setup_env.sh: $python not found; install Python 3.13 or set PYTHON"; return 1; }
+    local want have
+    want=$("$python" -c 'import sys; print("%d.%d" % sys.version_info[:2])')
+    if [ -d .venv ]; then
+        have=$(.venv/bin/python -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null)
+        if [ "$have" != "$want" ]; then
+            echo "setup_env.sh: .venv is Python ${have:-unknown}, the project needs $want: rebuilding .venv"
+            rm -rf .venv
+        fi
+    fi
+
     if [ ! -d .venv ]; then
         command -v "$python" >/dev/null 2>&1 \
-            || { echo "setup_env.sh: $python not found; install Python 3.12 or set PYTHON"; return 1; }
+            || { echo "setup_env.sh: $python not found; install Python 3.13 or set PYTHON"; return 1; }
         echo "setup_env.sh: creating .venv with $("$python" --version) at $(command -v "$python")"
         "$python" -m venv .venv || return 1
     fi
@@ -39,8 +51,8 @@ setup_env() {
     if [ ! -f .venv/lock.stamp ] || [ requirements-lock.txt -nt .venv/lock.stamp ]; then
         echo "setup_env.sh: installing requirements-lock.txt"
         python -m pip install --quiet --disable-pip-version-check -r requirements-lock.txt || return 1
-        python -m ipykernel install --user --name attractor-py312 --display-name "Python (attractor 3.12)" >/dev/null || return 1
-        echo "setup_env.sh: Jupyter kernel 'attractor-py312' -> $PWD/.venv/bin/python"
+        python -m ipykernel install --user --name attractor-py313 --display-name "Python (attractor 3.13)" >/dev/null || return 1
+        echo "setup_env.sh: Jupyter kernel 'attractor-py313' -> $PWD/.venv/bin/python"
         touch .venv/lock.stamp
     fi
 

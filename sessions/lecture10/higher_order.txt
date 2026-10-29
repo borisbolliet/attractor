@@ -1,0 +1,9 @@
+Lecture 10, two higher-order functions of the standard library. Run from the project root:
+    python -m doctest -v sessions/lecture10/higher_order.txt
+
+>>> import functools
+>>> sorted(["pear", "fig", "apple"], key=len)
+['fig', 'pear', 'apple']
+>>> from_binary = functools.partial(int, base=2)
+>>> from_binary("101"), from_binary.func is int
+(5, True)
