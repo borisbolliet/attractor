@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "attractor"
-version = "1.0.0"
+version = "1.0.1"
 description = "Predator-prey models, fixed-step integrators and cycle periods"
 readme = "README.md"
 license = "MIT"
@@ -22,3 +22,6 @@ attractor-fit = "attractor.cli:fit"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+attractor = ["data/*.csv"]
