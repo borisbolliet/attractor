@@ -1,0 +1,22 @@
+Lecture 11, the first model classes of experiments/plain_models.py: an instance, the MRO, a bound method, a list shared through the class body.
+    python -m doctest -v sessions/lecture11/classes.txt
+
+>>> import numpy as np
+>>> from experiments.plain_models import DynamicalSystem, LotkaVolterra, Trajectory
+>>> lv = LotkaVolterra(0.8, 0.08, 0.77, 0.77)
+>>> vars(lv), lv.names
+({'a': 0.8, 'b': 0.08, 'c': 0.77, 'd': 0.77}, ('x', 'z'))
+>>> [c.__name__ for c in LotkaVolterra.__mro__]
+['LotkaVolterra', 'DynamicalSystem', 'object']
+>>> ["names" in vars(o) for o in (lv, LotkaVolterra, DynamicalSystem)]
+[False, False, True]
+>>> type(lv.rhs).__name__, lv.rhs.__func__ is LotkaVolterra.rhs
+('method', True)
+>>> y = np.array([1.5, 8.0])
+>>> np.array_equal(lv.rhs(0.0, y), LotkaVolterra.rhs(lv, 0.0, y))
+True
+
+>>> a, b = Trajectory(0, 0), Trajectory(0, 0)
+>>> a.tag("run 1")
+>>> b.labels, a.labels is Trajectory.labels
+(['run 1'], True)

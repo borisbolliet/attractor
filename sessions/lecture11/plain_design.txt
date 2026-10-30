@@ -1,0 +1,77 @@
+Lecture 11, plain interfaces and dataclasses: an abstract base class and a Protocol, a frozen dataclass and a per-instance default, composition, one function over several classes.
+    python -m doctest -v sessions/lecture11/plain_design.txt
+
+>>> from abc import ABC, abstractmethod
+>>> from typing import Protocol, runtime_checkable
+>>> from dataclasses import dataclass, field, replace
+>>> class Shape(ABC):
+...     @abstractmethod
+...     def area(self): ...
+>>> class Circle(Shape):                 # area not defined
+...     def __init__(self, r): self.r = r
+>>> Circle(1.0)
+Traceback (most recent call last):
+  ...
+TypeError: Can't instantiate abstract class Circle without an implementation for abstract method 'area'
+
+>>> @runtime_checkable
+... class HasArea(Protocol):
+...     def area(self): ...
+>>> class Square:                        # no base class
+...     def __init__(self, s): self.s = s
+...     def area(self): return self.s ** 2
+>>> sq = Square(3)
+>>> isinstance(sq, HasArea), isinstance(sq, Shape), isinstance(3, HasArea)
+(True, False, False)
+>>> class Fake:
+...     area = 3
+>>> isinstance(Fake(), HasArea)
+True
+>>> Fake().area()
+Traceback (most recent call last):
+  ...
+TypeError: 'int' object is not callable
+>>> from collections.abc import Sized
+>>> isinstance("abc", Sized), isinstance(3, Sized)
+(True, False)
+
+>>> @dataclass(frozen=True)
+... class Point:
+...     x: float
+...     y: float = 0.0
+>>> p = Point(1.0)
+>>> p, p == Point(1.0, 0.0), hash(p) == hash(Point(1.0))
+(Point(x=1.0, y=0.0), True, True)
+>>> p.x = 2.0
+Traceback (most recent call last):
+  ...
+dataclasses.FrozenInstanceError: cannot assign to field 'x'
+>>> replace(p, x=2.0)
+Point(x=2.0, y=0.0)
+>>> class PlainPoint:
+...     def __init__(self, x): self.x = x
+>>> PlainPoint(1.0) == PlainPoint(1.0)
+False
+>>> @dataclass
+... class Path:
+...     points: list = field(default_factory=list)
+>>> Path().points is Path().points
+False
+
+>>> class Stack:
+...     def __init__(self): self.items = []          # has a list
+...     def push(self, x): self.items.append(x)
+...     def pop(self): return self.items.pop()
+>>> s = Stack(); s.push(1); s.push(2)
+>>> s.pop(), hasattr(s, "insert"), hasattr(list, "insert")
+(2, False, True)
+
+>>> def total_area(shapes):
+...     return sum(s.area() for s in shapes)
+>>> class Rectangle:
+...     def __init__(self, w, h): self.w, self.h = w, h
+...     def area(self): return self.w * self.h
+>>> total_area([Square(2), Rectangle(2, 3)])
+10
+>>> [len(x) for x in ("abc", [1, 2], {"k": 0})]
+[3, 2, 1]

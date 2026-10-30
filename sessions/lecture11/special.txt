@@ -1,0 +1,29 @@
+Lecture 11, the special methods of Trajectory and DynamicalSystem: repr, len, indexing, iteration, a call, equality within a tolerance.
+    python -m doctest -v sessions/lecture11/special.txt
+
+>>> import numpy as np
+>>> from integrators import RK4, integrate, rk4_step
+>>> from models import LotkaVolterra
+>>> from trajectory import Trajectory
+>>> lv = LotkaVolterra()
+>>> tr = RK4(0.05).run(lv, [1.5, 8.0], 0.0, 40.0)
+>>> tr, len(tr)
+(Trajectory(801 points, t in [0, 40]), 801)
+>>> tr[1]
+(0.05, array([1.51157577, 8.1573318 ]))
+>>> for t, y in tr.every(400): print(t, y)
+0.0 [1.5 8. ]
+20.0 [ 0.61050019 11.77162738]
+40.0 [1.23841453 6.32676313]
+
+>>> lv(0.0, np.array([1.5, 8.0]))
+array([0.24, 3.08])
+>>> t, y = integrate(rk4_step, lv, np.array([1.5, 8.0]), 0.0, 40.0, 0.05)
+>>> np.array_equal(y, tr.y), np.array_equal(t, tr.t)
+(True, True)
+
+>>> other = Trajectory(t, y + 1e-9, lv.names)
+>>> tr == other, tr == other.every(2), tr != other
+(True, False, False)
+>>> Trajectory.__hash__ is None
+True

@@ -1,0 +1,47 @@
+Lecture 11, classes as objects: the class body at the class statement, class and instance dictionaries, bound methods, the class body as a namespace, type and object, special methods looked up on the type.
+    python -m doctest -v sessions/lecture11/plain_types.txt
+
+>>> class Particle:
+...     print("defining Particle")
+...     species = "photon"
+...     def describe(self):
+...         return self.species
+defining Particle
+>>> p, p2 = Particle(), Particle()
+>>> p is p2, vars(p), "species" in vars(Particle)
+(False, {}, True)
+>>> p.species = "electron"
+>>> vars(p), Particle.species, p2.species
+({'species': 'electron'}, 'photon', 'photon')
+
+>>> p.describe(), Particle.describe(p)
+('electron', 'electron')
+>>> p.describe(p)
+Traceback (most recent call last):
+TypeError: Particle.describe() takes 1 positional argument but 2 were given
+
+>>> class Label:
+...     unit = "cm"
+...     def text(self):
+...         return unit
+>>> Label().text()
+Traceback (most recent call last):
+NameError: name 'unit' is not defined
+
+>>> int("256") is int("256"), int("257") is int("257")
+(True, False)
+
+>>> type(Particle), type(int), Particle.__bases__
+(<class 'type'>, <class 'type'>, (<class 'object'>,))
+>>> type(object), type(type), type.__mro__
+(<class 'type'>, <class 'type'>, (<class 'type'>, <class 'object'>))
+>>> isinstance(map, type), type(map(abs, []))
+(True, <class 'map'>)
+
+>>> class Vector:
+...     def norm(self): return 5
+>>> v = Vector()
+>>> "__call__" in vars(type), "__call__" in vars(Vector)
+(True, False)
+>>> hasattr(Vector, "__call__"), hasattr(v, "__call__"), callable(v)
+(True, False, False)
