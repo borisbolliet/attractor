@@ -1,8 +1,8 @@
 """Run from the project root: python -m exercises.lecture10.e3_registry"""
 import importlib
-from tools import REGISTRY
+from attractor.tools import REGISTRY
 print(REGISTRY)
-import models
+from attractor import models
 print(sorted(REGISTRY),
       id(REGISTRY["lotka_volterra"]) == id(models.make_lotka_volterra))
 m = importlib.reload(models)

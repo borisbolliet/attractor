@@ -7,8 +7,8 @@ from pathlib import Path
 
 import numpy as np
 
-from integrators import RK4
-from models import Goodwin
+from attractor.integrators import RK4
+from attractor.models import Goodwin
 
 os.environ.setdefault("MPLBACKEND", "Agg")
 import matplotlib.pyplot as plt  # noqa: E402

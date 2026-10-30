@@ -2,9 +2,9 @@ Lecture 10, the counting wrapper of tools.py on the right-hand side of the chemo
     python -m doctest -v sessions/lecture10/counted_rhs.txt
 
 >>> import numpy as np
->>> from integrators import integrate, rk4_step
->>> from models import CHEMOSTAT, make_lotka_volterra
->>> from tools import counted
+>>> from attractor.integrators import integrate, rk4_step
+>>> from attractor.models import CHEMOSTAT, make_lotka_volterra
+>>> from attractor.tools import counted
 >>> rhs = make_lotka_volterra(**CHEMOSTAT)
 >>> rhs = counted(rhs)
 >>> t, y = integrate(rk4_step, rhs, np.array([1.5, 8.0]), 0.0, 40.0, 0.05)

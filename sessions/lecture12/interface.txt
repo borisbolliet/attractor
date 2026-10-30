@@ -1,0 +1,12 @@
+Lecture 12, the public names of a package: __all__ of the json package, a name bound in json/__init__.py that is not public, and what "from json import *" binds.
+    python -m doctest -v sessions/lecture12/interface.txt
+
+>>> import json
+>>> json.__all__
+['dump', 'dumps', 'load', 'loads', 'JSONDecoder', 'JSONDecodeError', 'JSONEncoder']
+>>> "codecs" in vars(json), "codecs" in json.__all__
+(True, False)
+>>> names = {}
+>>> exec("from json import *", names)
+>>> sorted(name for name in names if name != "__builtins__")
+['JSONDecodeError', 'JSONDecoder', 'JSONEncoder', 'dump', 'dumps', 'load', 'loads']

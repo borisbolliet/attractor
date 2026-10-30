@@ -1,4 +1,5 @@
-"""Report of the active environment: interpreter, NumPy, and the project variables.
+"""Report of the active environment: interpreter, NumPy, the attractor package, and the
+project variables.
 
 Usage: python check_env.py
 """
@@ -15,17 +16,25 @@ try:
 except ImportError:
     numpy_version = numpy_file = "not installed"
 
+try:
+    import attractor
+    attractor_version, attractor_file = attractor.__version__, attractor.__file__
+except ImportError:
+    attractor_version = attractor_file = "not installed"
+
 print(f"{'python':<16}{sys.executable}")
 print(f"{'version':<16}{sys.version.split()[0]}")
 print(f"{'numpy':<16}{numpy_version}")
 print(f"{'numpy file':<16}{numpy_file}")
+print(f"{'attractor':<16}{attractor_version}")
+print(f"{'attractor file':<16}{attractor_file}")
 print(f"{'PYTHONPATH':<16}{os.environ.get('PYTHONPATH', '(unset)')}")
 
 defaults = {
     "DATA_PATH": "data",
     "RESULTS_PATH": "results",
     "OMP_NUM_THREADS": "(unset; library default)",
-    "MPLBACKEND": "(unset: Agg in analyse.py)",
+    "MPLBACKEND": "(unset: Agg in the scripts)",
     "LLM_BASE_URL": "(unset)",
     "LLM_MODEL": "(unset)",
 }

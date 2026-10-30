@@ -1,8 +1,8 @@
 Lecture 10, the registry of model factories, filled by the import of models. Run from the project root:
     python -m doctest -v sessions/lecture10/registry.txt
 
->>> from tools import REGISTRY, make_model
->>> import models
+>>> from attractor.tools import REGISTRY, make_model
+>>> from attractor import models
 >>> sorted(REGISTRY)
 ['lotka_volterra', 'rosenzweig_macarthur']
 >>> REGISTRY is models.REGISTRY

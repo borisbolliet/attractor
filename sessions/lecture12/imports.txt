@@ -1,0 +1,19 @@
+Lecture 12, a package and its submodules: the attribute __path__, the full name of a submodule, a relative name resolved against its package, a module that is not found.
+    python -m doctest -v sessions/lecture12/imports.txt
+
+>>> import importlib.util, json, math
+>>> hasattr(json, "__path__"), hasattr(math, "__path__")
+(True, False)
+>>> json.__file__.endswith("json/__init__.py")
+True
+>>> import json.decoder
+>>> json.decoder.__name__, json.decoder.__package__
+('json.decoder', 'json')
+>>> importlib.util.resolve_name(".decoder", "json")
+'json.decoder'
+>>> importlib.util.find_spec("no_such_module") is None
+True
+>>> import no_such_module
+Traceback (most recent call last):
+  ...
+ModuleNotFoundError: No module named 'no_such_module'

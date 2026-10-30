@@ -2,7 +2,7 @@
 
 Run from the project root: python -m experiments.stack_order
 """
-from tools import counted, timed
+from attractor.tools import counted, timed
 
 
 def A(f):

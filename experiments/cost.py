@@ -7,9 +7,9 @@ from pathlib import Path
 
 import numpy as np
 
-from integrators import euler_step, integrate, rk4_step
-from models import CHEMOSTAT, make_lotka_volterra
-from tools import counted
+from attractor.integrators import euler_step, integrate, rk4_step
+from attractor.models import CHEMOSTAT, make_lotka_volterra
+from attractor.tools import counted
 
 Y0, T1, TARGET = np.array([1.5, 8.0]), 40.0, 1e-5
 STEPS = {"euler": (0.1, 0.05, 0.01, 0.005, 0.001), "rk4": (0.4, 0.2, 0.1, 0.05, 0.01)}

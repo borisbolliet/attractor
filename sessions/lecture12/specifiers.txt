@@ -1,0 +1,19 @@
+Lecture 12, PEP 440 version specifiers on five releases of SciPy, and versions compared component by component.
+    python -m doctest -v sessions/lecture12/specifiers.txt
+
+>>> from packaging.specifiers import SpecifierSet
+>>> from packaging.version import Version
+>>> Version("1.10.1") > Version("1.9.3"), Version("1.15") == Version("1.15.0")
+(True, True)
+>>> releases = ["1.9.3", "1.10.1", "1.11.4", "1.15.3", "1.18.1"]
+>>> specs = ["~=1.11.2", "~=1.11", "==1.15", "==1.15.*",
+...          "!=1.11.*", ">=1.10,<1.15", "<=1.15"]
+>>> for spec in specs:
+...     print(f"{spec:<13}", list(SpecifierSet(spec).filter(releases)))
+~=1.11.2      ['1.11.4']
+~=1.11        ['1.11.4', '1.15.3', '1.18.1']
+==1.15        []
+==1.15.*      ['1.15.3']
+!=1.11.*      ['1.9.3', '1.10.1', '1.15.3', '1.18.1']
+>=1.10,<1.15  ['1.10.1', '1.11.4']
+<=1.15        ['1.9.3', '1.10.1', '1.11.4']

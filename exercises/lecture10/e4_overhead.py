@@ -1,6 +1,6 @@
 """Run from the project root: python -m exercises.lecture10.e4_overhead"""
 import time
-from tools import counted, timed
+from attractor.tools import counted, timed
 def empty(): pass
 N = 10**6
 PAIRS = (("bare", empty), ("counted", counted(empty)), ("timed", timed(empty)))

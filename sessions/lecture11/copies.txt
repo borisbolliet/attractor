@@ -2,7 +2,7 @@ Lecture 11, the views inside the copies that Trajectory's methods return, and th
     python -m doctest -v sessions/lecture11/copies.txt
 
 >>> import numpy as np
->>> from trajectory import Trajectory
+>>> from attractor.trajectory import Trajectory
 >>> tr = Trajectory(np.arange(6.0), np.arange(12.0).reshape(6, 2))
 >>> rv, ev = tr.time_reversed(), tr.every(2)
 >>> rv.y.base is tr.y, ev.y.base is tr.y, rv.t.base is None
