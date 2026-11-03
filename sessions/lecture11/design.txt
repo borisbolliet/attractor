@@ -1,0 +1,36 @@
+Lecture 11, the interface of the model classes: the abstract base class, the Protocol, the frozen dataclass, a per-instance list, one integrator over three model classes.
+    python -m doctest -v sessions/lecture11/design.txt
+
+>>> import numpy as np
+>>> from dataclasses import replace
+>>> from integrators import RK4
+>>> from models import DynamicalSystem, Goodwin, HasRHS, LotkaVolterra, RosenzweigMacArthur
+>>> DynamicalSystem()
+Traceback (most recent call last):
+  ...
+TypeError: Can't instantiate abstract class DynamicalSystem without an implementation for abstract method 'rhs'
+>>> lv = LotkaVolterra()
+>>> isinstance(lv, HasRHS), isinstance(lv, DynamicalSystem), isinstance(3, HasRHS)
+(True, True, False)
+
+>>> lv, lv == LotkaVolterra(), hash(lv) == hash(LotkaVolterra())
+(LotkaVolterra(a=0.8, b=0.08, c=0.77, d=0.77), True, True)
+>>> lv.a = 1.0
+Traceback (most recent call last):
+  ...
+dataclasses.FrozenInstanceError: cannot assign to field 'a'
+>>> replace(lv, a=0.9)
+LotkaVolterra(a=0.9, b=0.08, c=0.77, d=0.77)
+>>> a = RK4(0.05).run(lv, [1.5, 8.0], 0.0, 1.0)
+>>> b = RK4(0.05).run(lv, [1.5, 8.0], 0.0, 1.0)
+>>> a.labels is b.labels
+False
+
+>>> runs = [(LotkaVolterra(), (1.5, 8.0)), (RosenzweigMacArthur(), (1.5, 0.5)),
+...         (Goodwin(0.03, 0.05, 0.5, 0.45), (0.95, 0.65))]
+>>> for system, y0 in runs:
+...     tr = RK4(0.05).run(system, y0, 0.0, 300.0)
+...     print(f"{type(system).__name__:20} {tr.period():5.1f}  {tr.names}")
+LotkaVolterra          8.2  ('algae', 'rotifers')
+RosenzweigMacArthur   13.9  ('prey', 'predator')
+Goodwin               54.2  ('employment rate', 'wage share')

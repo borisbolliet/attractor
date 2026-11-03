@@ -1,6 +1,7 @@
 # Specification: lower bounds for imported packages,
 # plus ipykernel for the notebook kernel.
 numpy>=1.26
+scipy>=1.11
 matplotlib>=3.8
 python-dotenv
 openai

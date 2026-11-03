@@ -1,0 +1,51 @@
+Lecture 11, plain classes: a class and its instances, attribute lookup and the MRO, bound methods, shadowing, a shared class attribute.
+    python -m doctest -v sessions/lecture11/plain_classes.txt
+
+>>> class Point:
+...     unit = "cm"
+...     def __init__(self, x, y):
+...         self.x, self.y = x, y
+...     def norm(self):
+...         return (self.x**2 + self.y**2) ** 0.5
+>>> p = Point(3, 4)
+>>> vars(p), p.unit, p.norm()
+({'x': 3, 'y': 4}, 'cm', 5.0)
+
+>>> type(3), isinstance(3, int), int("12")
+(<class 'int'>, True, 12)
+>>> import math
+>>> type(math), isinstance(math, type)
+(<class 'module'>, False)
+
+>>> class Pixel(Point):
+...     unit = "px"
+>>> q = Pixel(3, 4)
+>>> [c.__name__ for c in Pixel.__mro__]
+['Pixel', 'Point', 'object']
+>>> q.unit, q.norm(), "norm" in vars(Pixel)
+('px', 5.0, False)
+>>> type(Point.norm).__name__, type(q.norm).__name__
+('function', 'method')
+>>> q.norm.__func__ is Point.norm, Point.norm(q)
+(True, 5.0)
+
+>>> q.unit = "mm"
+>>> q.unit, Pixel.unit, "unit" in vars(q)
+('mm', 'px', True)
+>>> del q.unit
+>>> q.unit
+'px'
+
+>>> [c.__name__ for c in bool.__mro__], True + True
+(['bool', 'int', 'object'], 2)
+>>> "__add__" in vars(bool), "__add__" in vars(int)
+(False, True)
+
+>>> class Tally:
+...     seen = []
+...     def add(self, x):
+...         self.seen.append(x)
+>>> a, b = Tally(), Tally()
+>>> a.add(1)
+>>> b.seen, "seen" in vars(a), a.seen is Tally.seen
+([1], False, True)

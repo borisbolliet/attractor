@@ -16,6 +16,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-09-start` | start of Lecture 9: model, integrators, driver, puzzles and exercises; `rk4_step` writes the new state into its argument |
 | `lecture-09` | end of Lecture 9: `rk4_step` rebinds `y` instead (`git diff lecture-09-start lecture-09`) |
 | `lecture-10` | end of Lecture 10: decorators in `tools.py`, a registry of models, experiments and exercises |
+| `lecture-11` | end of Lecture 11: model classes, the class `Trajectory`, integrator classes and the lynx–hare fit |
 
 ## Setup
 
@@ -54,7 +55,7 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 
 1. **Interpreter and packages.** `requirements.txt` gives package
    constraints (`numpy>=1.26`, `matplotlib>=3.8`, ...). `requirements-lock.txt`
-   is a `pip freeze` snapshot of 53 installed distributions from a Python
+   is a `pip freeze` snapshot of 54 installed distributions from a Python
    3.13.11 macOS arm64 environment, created on 2026-10-29. `pip freeze`
    reports installed versions; it does not solve requirements or create a
    cross-platform lockfile. `setup_env.sh` installs the snapshot. The venv,
@@ -81,8 +82,8 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 | `data/C1.csv` ... `data/C10.csv` | the ten runs; columns: time (days), algae (10^6 cells/ml), rotifers (animals/ml), egg ratio, eggs, dead animals, medium |
 | `analyse.py` | period of every run from the peaks of the algae density; writes `results/periods.csv` and `results/periods.png` |
 | `period.py` | the same computation for one run: `python period.py data/C9.csv` |
-| `models.py` | Lotka–Volterra and Rosenzweig–MacArthur right-hand sides, built by factory functions; the chemostat parameters `CHEMOSTAT`; the factories are registered by name |
-| `integrators.py` | Euler and RK4 steps and `integrate`, the fixed-step loop |
+| `models.py` | abstract class `DynamicalSystem` and the models `LotkaVolterra`, `RosenzweigMacArthur` and `Goodwin`; the factory functions of Lecture 9, registered by name; the chemostat parameters `CHEMOSTAT` |
+| `integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory` |
 | `cycles.py` | peak finder and cycle period, used by `analyse.py` and `simulate.py` |
 | `simulate.py` | integrates the chemostat model, prints its period and writes `results/simulated.png`; step size from `ATTRACTOR_H` |
 | `puzzles/` | short scripts on names, calls, scopes, closures and imports (Lecture 9) |
@@ -90,13 +91,19 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 | `tools.py` | decorators `counted`, `timed` and `register`, and `REGISTRY`, the model factories by name |
 | `experiments/` | scripts run from the project root as `python -m experiments.<name>` (Lectures 10 and 11) |
 | `exercises/lecture10/` | scripts that check the answers to the exercises of Lecture 10 |
+| `trajectory.py` | class `Trajectory`: the times and states of one run |
+| `data/lynx_hare.csv` | lynx and snowshoe hare pelts traded by the Hudson's Bay Company, 1900–1920, in thousands |
+| `exercises/lecture11/` | scripts that check the answers to the exercises of Lecture 11 |
+| `sessions/lecture11/` | interpreter sessions of the Lecture 11 notes, checked with `python -m doctest sessions/lecture11/*.txt` |
 | `sessions/lecture10/` | interpreter sessions of the Lecture 10 notes, checked with `python -m doctest sessions/lecture10/*.txt` |
 | `lecture10.ipynb` | the notebook of Lecture 10, run with the kernel `Python (attractor 3.13)` |
 | `lecture10-mine.ipynb` | the notebook of Lecture 10 as run in the lecture, with its outputs |
+| `lecture11.ipynb` | the notebook of Lecture 11, run with the same kernel |
+| `lecture11-mine.ipynb` | the notebook of Lecture 11 as run in the lecture, with its outputs |
 | `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, NumPy version and location, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |
-| `requirements.txt` | package specification: the four imported packages and ipykernel |
+| `requirements.txt` | package specification: the five imported packages and ipykernel |
 | `requirements-lock.txt` | `pip freeze` snapshot, Python 3.13.11 on macOS arm64 (Python 3.12.12 up to `lecture-09`) |
 | `.env.example` | configuration template; copied to `.env` by `setup_env.sh` |
 | `setup_env.sh` | one-step setup, to be sourced |
@@ -152,6 +159,12 @@ experimental predator-prey system*, Nature **577**, 226-230 (2020),
 doi:10.6084/m9.figshare.10045976, <https://doi.org/10.6084/m9.figshare.10045976>
 (CC BY 4.0).
 
+`data/lynx_hare.csv` is the data file of B. Carpenter, *Predator-Prey
+Population Dynamics: the Lotka-Volterra model in Stan* (2018), from
+<https://github.com/stan-dev/example-models>
+(`knitr/lotka-volterra/hudson-bay-lynx-hare.csv`, BSD licence), which takes
+the table from P. Howard's lecture notes (2009).
+
 ## Licence
 
-MIT, Boris Bolliet 2026 (see `LICENSE`); the data keep their CC BY 4.0 licence.
+MIT, Boris Bolliet 2026 (see `LICENSE`); the chemostat data keep their CC BY 4.0 licence and the lynx–hare table its BSD licence.

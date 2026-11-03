@@ -1,0 +1,37 @@
+Lecture 11, plain copies: a list of lists under copy.copy and copy.deepcopy, an object of two arrays copied with one attribute rebound, a view inside a copy.
+    python -m doctest -v sessions/lecture11/plain_copies.txt
+
+>>> import copy
+>>> import numpy as np
+>>> grid = [[0, 0], [0, 0]]
+>>> sh = copy.copy(grid); sh[0][0] = 1; grid
+[[1, 0], [0, 0]]
+>>> copy.copy(grid)[0] is grid[0], copy.deepcopy(grid)[0] is grid[0]
+(True, False)
+
+>>> class Points:
+...     def __init__(self, x, y): self.x, self.y = x, y
+...     def moved(self, dx):
+...         new = copy.copy(self)
+...         new.x = self.x + dx           # a new array; y is shared
+...         return new
+>>> p = Points(np.zeros(3), np.zeros(3))
+>>> q = p.moved(1.0)
+>>> q.x is p.x, q.y is p.y, copy.deepcopy(p).y is p.y
+(False, True, False)
+>>> q.y[0] = 5.0; p.y
+array([5., 0., 0.])
+
+>>> p = Points(np.arange(4.0), np.zeros(4))
+>>> s = copy.copy(p)
+>>> s.x = p.x[::2]                      # a view
+>>> s.x.base is p.x, np.shares_memory(s.x, p.x)
+(True, True)
+>>> s.x[1] = -1.0; p.x
+array([ 0.,  1., -1.,  3.])
+>>> m = p.x[p.x > 0]                    # a boolean mask copies
+>>> m.base is None, np.shares_memory(m, p.x)
+(True, False)
+>>> v = p.x[1:]
+>>> v[::2].base is p.x, v[::2].base is v
+(True, False)

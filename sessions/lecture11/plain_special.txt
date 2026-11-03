@@ -1,0 +1,46 @@
+Lecture 11, plain special methods: a Vector under repr, len, indexing and iteration; an object that can be called; equality within a tolerance.
+    python -m doctest -v sessions/lecture11/plain_special.txt
+
+>>> class Vector:
+...     def __init__(self, x, y): self.x, self.y = x, y
+...     def __repr__(self): return f"Vector({self.x}, {self.y})"
+...     def __len__(self): return 2
+...     def __getitem__(self, i): return (self.x, self.y)[i]
+>>> v = Vector(3, 4)
+>>> v, len(v), v[1], list(v)
+(Vector(3, 4), 2, 4, [3, 4])
+>>> len("abc"), type("abc").__len__("abc")
+(3, 3)
+>>> class Bare:
+...     pass
+>>> len(Bare())
+Traceback (most recent call last):
+  ...
+TypeError: object of type 'Bare' has no len()
+
+>>> class Scale:
+...     def __init__(self, k): self.k = k
+...     def __call__(self, x): return self.k * x
+>>> double = Scale(2)
+>>> double(21), callable(double), list(map(double, [1, 2]))
+(42, True, [2, 4])
+
+>>> class Approx:
+...     def __init__(self, v): self.v = v
+...     def __eq__(self, other):
+...         if not isinstance(other, Approx):
+...             return NotImplemented
+...         return abs(self.v - other.v) <= 1e-9
+>>> Approx(1.0) == Approx(1.0 + 1e-12), Approx(1.0) == 1.0
+(True, False)
+>>> Approx.__hash__ is None
+True
+
+>>> import numpy as np
+>>> a = np.array([1.0, 2.0])
+>>> a == a
+array([ True,  True])
+>>> if a == a: pass
+Traceback (most recent call last):
+  ...
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
