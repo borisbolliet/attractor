@@ -1,0 +1,14 @@
+Lecture 10, a decorator runs when the def is executed, and its return value takes the name. Run from the project root:
+    python -m doctest -v sessions/lecture10/decorator.txt
+
+>>> def loud(f):
+...     print("decorating", f.__name__)
+...     return f
+...
+>>> @loud
+... def area(w, h): return w * h
+...
+decorating area
+>>> area = loud(area); area(2, 3)
+decorating area
+6

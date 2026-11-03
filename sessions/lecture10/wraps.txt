@@ -1,0 +1,24 @@
+Lecture 10, what functools.wraps copies to the wrapper. Run from the project root:
+    python -m doctest -v sessions/lecture10/wraps.txt
+
+>>> import functools, inspect
+>>> def area(w, h):
+...     """Area of a w by h rectangle."""
+...     return w * h
+...
+>>> def bare(f):
+...     def wrapper(*args, **kwargs):
+...         return f(*args, **kwargs)
+...     return wrapper
+...
+>>> def neat(f):
+...     @functools.wraps(f)
+...     def wrapper(*args, **kwargs):
+...         return f(*args, **kwargs)
+...     return wrapper
+...
+>>> b, n = bare(area), neat(area)
+>>> b.__name__, b.__doc__, inspect.signature(b)
+('wrapper', None, <Signature (*args, **kwargs)>)
+>>> n.__name__, n.__doc__, inspect.signature(n), n.__wrapped__ is area
+('area', 'Area of a w by h rectangle.', <Signature (w, h)>, True)

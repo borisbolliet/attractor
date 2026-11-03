@@ -1,0 +1,9 @@
+Lecture 10, two readings of the interval clock around a computation. Run from the project root:
+    python -m doctest -v sessions/lecture10/timer.txt
+
+>>> import time
+>>> start = time.perf_counter()
+>>> total = sum(range(10**6))
+>>> elapsed = time.perf_counter() - start
+>>> total, elapsed > 0
+(499999500000, True)

@@ -1,0 +1,29 @@
+Lecture 10, a counting wrapper as a closure, and a wrapper with named parameters. Run from the project root:
+    python -m doctest -v sessions/lecture10/wrappers.txt
+
+>>> import math
+>>> def counted(f):
+...     def wrapper(*args, **kwargs):
+...         wrapper.calls += 1
+...         return f(*args, **kwargs)
+...     wrapper.calls = 0
+...     return wrapper
+...
+>>> hyp = counted(math.hypot)
+>>> hyp(3, 4), hyp(5, 12), hyp.calls
+(5.0, 13.0, 2)
+>>> hyp.__code__.co_freevars, hyp.__closure__[0].cell_contents
+(('f', 'wrapper'), <built-in function hypot>)
+>>> def counted_badly(f):
+...     def wrapper(x):
+...         wrapper.calls += 1
+...         return f(x)
+...     wrapper.calls = 0
+...     return wrapper
+...
+>>> counted_badly(abs)(-2)
+2
+>>> counted_badly(math.hypot)(3, 4)  # doctest: +ELLIPSIS
+Traceback (most recent call last):
+    ...
+TypeError: ...wrapper() takes 1 positional argument but 2 were given

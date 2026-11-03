@@ -1,0 +1,13 @@
+Lecture 10, a cache returns the stored object itself. Run from the project root:
+    python -m doctest -v sessions/lecture10/shared.txt
+
+>>> import functools
+>>> @functools.lru_cache
+... def digits(n):
+...     return [int(c) for c in str(n)]
+...
+>>> a = digits(2026)
+>>> a.append(0)
+>>> b = digits(2026)
+>>> b, b is a, digits.cache_info().hits
+([2, 0, 2, 6, 0], True, 1)
