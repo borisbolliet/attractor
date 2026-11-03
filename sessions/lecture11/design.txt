@@ -3,8 +3,8 @@ Lecture 11, the interface of the model classes: the abstract base class, the Pro
 
 >>> import numpy as np
 >>> from dataclasses import replace
->>> from integrators import RK4
->>> from models import DynamicalSystem, Goodwin, HasRHS, LotkaVolterra, RosenzweigMacArthur
+>>> from attractor.integrators import RK4
+>>> from attractor.models import DynamicalSystem, Goodwin, HasRHS, LotkaVolterra, RosenzweigMacArthur
 >>> DynamicalSystem()
 Traceback (most recent call last):
   ...

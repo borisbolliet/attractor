@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# setup_env.sh -- virtual environment, pinned package snapshot, .env and Jupyter kernel
-# of the attractor project, in one step.
+# setup_env.sh -- virtual environment, pinned package snapshot, the project itself, .env
+# and Jupyter kernel of the attractor project, in one step.
 #
 # Usage, from the repository root, in bash or zsh:
 #     source setup_env.sh
@@ -54,6 +54,15 @@ setup_env() {
         python -m ipykernel install --user --name attractor-py313 --display-name "Python (attractor 3.13)" >/dev/null || return 1
         echo "setup_env.sh: Jupyter kernel 'attractor-py313' -> $PWD/.venv/bin/python"
         touch .venv/lock.stamp
+    fi
+
+    # the project itself, editable and without dependencies, which the snapshot holds;
+    # reinstalled when pyproject.toml changes, since pip writes the metadata at install time
+    if [ ! -f .venv/project.stamp ] || [ pyproject.toml -nt .venv/project.stamp ]; then
+        echo "setup_env.sh: installing the project (pip install -e . --no-deps)"
+        python -m pip install --quiet --disable-pip-version-check \
+            -e . --no-deps || return 1
+        touch .venv/project.stamp
     fi
 
     if [ ! -f .env ]; then

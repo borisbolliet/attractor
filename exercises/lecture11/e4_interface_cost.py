@@ -1,7 +1,7 @@
 """Run from the project root: python -m exercises.lecture11.e4_interface_cost"""
 import time
 import numpy as np
-from models import CHEMOSTAT, LotkaVolterra
+from attractor.models import CHEMOSTAT, LotkaVolterra
 def make_closure(a, b, c, d):
     def rhs(t, y):
         x, z = y

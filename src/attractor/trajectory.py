@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from cycles import cycle_period
+from .cycles import cycle_period
 
 
 @dataclass(eq=False)

@@ -6,9 +6,9 @@ import cProfile
 
 import numpy as np
 
-from integrators import integrate, rk4_step
-from models import CHEMOSTAT, make_lotka_volterra
-from tools import counted, timed
+from attractor.integrators import integrate, rk4_step
+from attractor.models import CHEMOSTAT, make_lotka_volterra
+from attractor.tools import counted, timed
 
 y0 = np.array([1.5, 8.0])
 timed_integrate = timed(integrate)

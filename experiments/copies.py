@@ -5,7 +5,7 @@ Run from the project root: python -i -m experiments.copies
 """
 import numpy as np
 
-from trajectory import Trajectory
+from attractor.trajectory import Trajectory
 
 tr = Trajectory(np.arange(6.0), np.arange(12.0).reshape(6, 2).copy())  # y must own its memory
 sh, ev, rv, dp = tr.shifted(1.0), tr.every(2), tr.time_reversed(), tr.copy()

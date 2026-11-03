@@ -3,7 +3,7 @@
 The endpoint, key and model name come from LLM_BASE_URL, LLM_API_KEY and
 LLM_MODEL (read from .env); any OpenAI-compatible server works.
 
-Usage: python ask_llm.py            (after python analyse.py)
+Usage: python ask_llm.py            (after attractor-periods)
 """
 import os
 from pathlib import Path
@@ -20,9 +20,9 @@ model = os.environ.get("LLM_MODEL", "qwen3.8-flash-next")
 
 results = Path(os.environ.get("RESULTS_PATH", "results")) / "periods.csv"
 if not results.exists():
-    raise SystemExit(f"ask_llm.py: {results} not found; run python analyse.py first")
+    raise SystemExit(f"ask_llm.py: {results} not found; run attractor-periods first")
 rows = [line.split(",") for line in results.read_text().splitlines() if line]
-# periods to three decimals, as printed by analyse.py; the file holds the full repr
+# periods to three decimals, as printed by attractor-periods; the file holds the full repr
 table = "\n".join(
     ",".join(r) if i == 0 else ",".join(r[:3] + [f"{float(r[3]):.3f}"])
     for i, r in enumerate(rows)

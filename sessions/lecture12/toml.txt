@@ -1,0 +1,16 @@
+Lecture 12, the tables of a TOML file as nested dictionaries: [project.scripts] is the table scripts inside the table project.
+    python -m doctest -v sessions/lecture12/toml.txt
+
+>>> import tomllib
+>>> text = """
+... [project]
+... name = "toy"
+... dependencies = ["numpy>=1.26"]
+... [project.scripts]
+... toy = "toy.cli:main"
+... """
+>>> doc = tomllib.loads(text)
+>>> list(doc), list(doc["project"])
+(['project'], ['name', 'dependencies', 'scripts'])
+>>> doc["project"]["scripts"]
+{'toy': 'toy.cli:main'}

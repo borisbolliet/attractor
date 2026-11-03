@@ -5,7 +5,7 @@ from typing import Protocol, runtime_checkable
 
 import numpy as np
 
-from tools import REGISTRY, register
+from .tools import REGISTRY, register
 
 # Chemostat scales: algae x in 10^6 cells/ml, rotifers z in animals/ml, rates per day.
 # Equilibrium (d/c, a/b) = (1, 10); linearised period 2*pi/sqrt(a*d) = 8.0 days.

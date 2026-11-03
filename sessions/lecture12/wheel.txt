@@ -1,0 +1,13 @@
+Lecture 12, the metadata files that a wheel installs: the tags in WHEEL and the console command in entry_points.txt of python-dotenv.
+    python -m doctest -v sessions/lecture12/wheel.txt
+
+>>> from importlib.metadata import distribution
+>>> dist = distribution("python-dotenv")
+>>> print(dist.read_text("WHEEL").strip())
+Wheel-Version: 1.0
+Generator: setuptools (84.0.0)
+Root-Is-Purelib: true
+Tag: py3-none-any
+>>> print(dist.read_text("entry_points.txt").strip())
+[console_scripts]
+dotenv = dotenv.__main__:cli

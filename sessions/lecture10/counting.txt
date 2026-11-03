@@ -1,7 +1,7 @@
 Lecture 10, a call count as a measure of cost: the naive Fibonacci recursion under counted. Run from the project root:
     python -m doctest -v sessions/lecture10/counting.txt
 
->>> from tools import counted
+>>> from attractor.tools import counted
 >>> @counted
 ... def fib(n):
 ...     return n if n < 2 else fib(n - 1) + fib(n - 2)

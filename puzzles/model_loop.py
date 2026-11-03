@@ -1,9 +1,9 @@
 """Three models with different growth rates: bare lambdas against the factory (run from the project root as python -m puzzles.model_loop)."""
 import numpy as np
 
-from cycles import cycle_period
-from integrators import integrate, rk4_step
-from models import make_lotka_volterra
+from attractor.cycles import cycle_period
+from attractor.integrators import integrate, rk4_step
+from attractor.models import make_lotka_volterra
 
 y = np.array([1.0, 0.0])  # at z = 0 the first component of rhs is a*x = a
 models = [lambda t, y: np.array([a*y[0] - 0.08*y[0]*y[1],

@@ -1,0 +1,9 @@
+Lecture 12, package data read at run time: the settings file that Matplotlib keeps inside its package, found through importlib.resources.
+    python -m doctest -v sessions/lecture12/resources.txt
+
+>>> from importlib.resources import files
+>>> rc = files("matplotlib").joinpath("mpl-data/matplotlibrc")
+>>> rc.is_file(), rc.read_text().splitlines()[0]
+(True, '#### MATPLOTLIBRC FORMAT')
+>>> files("matplotlib").joinpath("mpl-data/no_such_file").is_file()
+False

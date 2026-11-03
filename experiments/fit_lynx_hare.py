@@ -9,15 +9,15 @@ from pathlib import Path
 import numpy as np
 from scipy.optimize import least_squares
 
-from cycles import peaks
-from integrators import RK4
-from models import LotkaVolterra
+from attractor.cycles import peaks
+from attractor.datasets import lynx_hare
+from attractor.integrators import RK4
+from attractor.models import LotkaVolterra
 
 os.environ.setdefault("MPLBACKEND", "Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-d = np.genfromtxt("data/lynx_hare.csv", delimiter=",", skip_header=3)
-year, lynx, hare = d[:, 0], d[:, 1], d[:, 2]  # thousands of pelts, 1900-1920
+year, lynx, hare = lynx_hare()  # thousands of pelts, 1900-1920, from the package data
 P0 = (0.5, 0.02, 0.01, 0.8, 30.0, 4.0)  # a, b, c, d, H0, L0
 
 

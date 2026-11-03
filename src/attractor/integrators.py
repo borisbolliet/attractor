@@ -2,7 +2,7 @@
 `Euler(h).run` and `RK4(h).run` return a `Trajectory`."""
 import numpy as np
 
-from trajectory import Trajectory
+from .trajectory import Trajectory
 
 
 def euler_step(rhs, t, y, h):

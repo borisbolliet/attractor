@@ -1,0 +1,20 @@
+Lecture 12, the installed package attractor: its public interface and version, its declared requirements, its console commands, a command called as a function, the table in the package.
+    python -m doctest -v sessions/lecture12/package.txt
+
+>>> import attractor
+>>> from importlib.metadata import entry_points, requires, version
+>>> attractor.__version__ == version("attractor")
+True
+>>> attractor.RK4 is attractor.integrators.RK4, "RK4" in attractor.__all__
+(True, True)
+>>> requires("attractor")
+['numpy>=1.26', 'scipy>=1.11; extra == "fit"', 'matplotlib>=3.8; extra == "plot"']
+>>> eps = entry_points(group="console_scripts")
+>>> sorted(ep.name for ep in eps if ep.module == "attractor.cli")
+['attractor-fit', 'attractor-periods', 'attractor-simulate']
+>>> from attractor.cli import simulate
+>>> simulate(["--h", "0.1"])
+401 points, step 0.1, algae period 8.18 days
+>>> year, lynx, hare = attractor.lynx_hare()
+>>> len(year), int(year[0]), float(hare.max())
+(21, 1900, 77.4)

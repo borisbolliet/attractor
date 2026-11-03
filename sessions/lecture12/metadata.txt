@@ -1,0 +1,14 @@
+Lecture 12, a distribution and its metadata: python-dotenv, imported as dotenv, with its version, the interpreters it accepts, an optional dependency and a console command.
+    python -m doctest -v sessions/lecture12/metadata.txt
+
+>>> import importlib.metadata as md
+>>> md.packages_distributions()["dotenv"]
+['python-dotenv']
+>>> meta = md.metadata("python-dotenv")
+>>> meta["Version"], meta["Requires-Python"]
+('1.2.4', '>=3.10')
+>>> md.requires("python-dotenv")
+['click>=5.0; extra == "cli"']
+>>> (ep,) = md.entry_points(group="console_scripts", name="dotenv")
+>>> ep.value, ep.module, ep.attr
+('dotenv.__main__:cli', 'dotenv.__main__', 'cli')

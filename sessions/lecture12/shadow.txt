@@ -1,0 +1,11 @@
+Lecture 12, the first entry of the import search path: for python -c the current folder comes first, so a file of that folder shadows a module of the standard library.
+    python -m doctest -v sessions/lecture12/shadow.txt
+
+>>> import pathlib, subprocess, sys, tempfile
+>>> folder = pathlib.Path(tempfile.mkdtemp())
+>>> _ = (folder / "random.py").write_text('print("random.py of this folder")')
+>>> run = [sys.executable, "-c", "import random"]
+>>> subprocess.run(run, cwd=folder, capture_output=True, text=True).stdout
+'random.py of this folder\n'
+>>> subprocess.run(run, capture_output=True, text=True).stdout
+''

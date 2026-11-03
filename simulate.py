@@ -9,9 +9,9 @@ from pathlib import Path
 import numpy as np
 from dotenv import load_dotenv
 
-from cycles import cycle_period
-from integrators import rk4_step
-from models import CHEMOSTAT, make_lotka_volterra
+from attractor.cycles import cycle_period
+from attractor.integrators import rk4_step
+from attractor.models import CHEMOSTAT, make_lotka_volterra
 
 load_dotenv()
 H = float(os.environ.get("ATTRACTOR_H", "0.05"))

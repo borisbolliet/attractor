@@ -2,9 +2,9 @@ Lecture 11, the special methods of Trajectory and DynamicalSystem: repr, len, in
     python -m doctest -v sessions/lecture11/special.txt
 
 >>> import numpy as np
->>> from integrators import RK4, integrate, rk4_step
->>> from models import LotkaVolterra
->>> from trajectory import Trajectory
+>>> from attractor.integrators import RK4, integrate, rk4_step
+>>> from attractor.models import LotkaVolterra
+>>> from attractor.trajectory import Trajectory
 >>> lv = LotkaVolterra()
 >>> tr = RK4(0.05).run(lv, [1.5, 8.0], 0.0, 40.0)
 >>> tr, len(tr)
