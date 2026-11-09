@@ -19,6 +19,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-11` | end of Lecture 11: model classes, the class `Trajectory`, integrator classes and the lynx–hare fit |
 | `lecture-12-start` | start of Lecture 12: the modules as the package `src/attractor`, `pyproject.toml` (version 1.0.0) and three console commands; `lynx_hare.csv` is not declared as package data, so the wheel leaves it out |
 | `lecture-12` | end of Lecture 12: `lynx_hare.csv` declared as package data, version 1.0.1 (`git diff lecture-12-start lecture-12`) |
+| `lecture-15-start` | start of Lecture 15: three tests in `tests/`, run with `python -m pytest`; `rk4_step` builds `k3` from `k1`, and the three tests still pass |
 
 ## Setup
 
@@ -27,6 +28,7 @@ git clone https://github.com/borisbolliet/attractor.git ~/GitHub/attractor
 cd ~/GitHub/attractor
 source setup_env.sh          # Python 3.13 venv, pinned packages, the project, .env, kernel attractor-py313
 attractor-periods            # table of periods and results/periods.csv
+python -m pytest             # the tests
 python ask_llm.py            # optional: two sentences about the table from a language model
 ```
 
@@ -58,8 +60,8 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 
 1. **Interpreter and packages.** `requirements.txt` gives package
    constraints (`numpy>=1.26`, `matplotlib>=3.8`, ...). `requirements-lock.txt`
-   is a `pip freeze` snapshot of 54 installed distributions from a Python
-   3.13.11 macOS arm64 environment, created on 2026-10-29. `pip freeze`
+   is a `pip freeze` snapshot of 59 installed distributions from a Python
+   3.13.11 macOS arm64 environment, created on 2026-11-09. `pip freeze`
    reports installed versions; it does not solve requirements or create a
    cross-platform lockfile. `setup_env.sh` installs the snapshot. The venv,
    `.venv/`, is a build product and is not committed.
@@ -84,13 +86,14 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 | File | Role |
 |---|---|
 | `data/C1.csv` ... `data/C10.csv` | the ten runs; columns: time (days), algae (10^6 cells/ml), rotifers (animals/ml), egg ratio, eggs, dead animals, medium |
-| `pyproject.toml` | the package `attractor`: name, version, dependencies, the extras `fit` (SciPy) and `plot` (Matplotlib), the console commands, the package data |
+| `pyproject.toml` | the package `attractor`: name, version, dependencies, the extras `fit` (SciPy), `plot` (Matplotlib) and `test` (pytest, pytest-cov), the console commands, the package data, the settings of pytest |
 | `src/attractor/__init__.py` | the public interface: the names listed in `__all__`, and `__version__` from the installed metadata |
 | `src/attractor/cli.py` | the console commands `attractor-simulate`, `attractor-periods` (the table of periods of the runs, `results/periods.csv`; `--plot FILE` for the figure) and `attractor-fit` (the lynx–hare fit) |
 | `src/attractor/datasets.py` | `load_run`, one chemostat run from its CSV file, and `lynx_hare`, the table in the package |
 | `src/attractor/models.py` | abstract class `DynamicalSystem` and the models `LotkaVolterra`, `RosenzweigMacArthur` and `Goodwin`; the factory functions of Lecture 9, registered by name; the chemostat parameters `CHEMOSTAT` |
 | `src/attractor/integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory` |
 | `src/attractor/cycles.py` | peak finder and cycle period |
+| `tests/` | the tests, run with `python -m pytest` from the repository root |
 | `simulate.py` | integrates the chemostat model with the loop written out, prints its period and writes `results/simulated.png`; step size from `ATTRACTOR_H`; `attractor-simulate` runs the same model |
 | `puzzles/` | short scripts on names, calls, scopes, closures and imports (Lecture 9) |
 | `exercises/lecture09/` | scripts that check the answers to the exercises of Lecture 9 |
@@ -110,14 +113,15 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 | `lecture11-mine.ipynb` | the notebook of Lecture 11 as run in the lecture, with its outputs |
 | `lecture12.ipynb` | the notebook of Lecture 12, run with the same kernel; its wheels are built in a temporary clone |
 | `lecture12-mine.ipynb` | the notebook of Lecture 12 as run in the lecture, with its outputs |
+| `lecture15.ipynb` | the notebook of Lecture 15, run with the same kernel; the cells that change the code work in a temporary clone |
 | `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, the versions and locations of NumPy and `attractor`, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |
-| `requirements.txt` | package specification: the five imported packages and ipykernel |
+| `requirements.txt` | package specification: the five imported packages, ipykernel, pytest and pytest-cov |
 | `requirements-lock.txt` | `pip freeze` snapshot, Python 3.13.11 on macOS arm64 (Python 3.12.12 up to `lecture-09`) |
 | `.env.example` | configuration template; copied to `.env` by `setup_env.sh` |
 | `setup_env.sh` | one-step setup, to be sourced |
-| `.gitignore` | `.venv*/`, `.env`, `results*/`, `__pycache__/`, `.ipynb_checkpoints/`, the build products `build/`, `dist/`, `*.egg-info/` (also `.venv313` and `results-np1`, `results-np2` of the lecture) |
+| `.gitignore` | `.venv*/`, `.env`, `results*/`, `__pycache__/`, `.ipynb_checkpoints/`, the build products `build/`, `dist/`, `*.egg-info/`, `.coverage`, `site/`, `.cache/`, `mutants/` (also `.venv313` and `results-np1`, `results-np2` of the lecture) |
 
 ## Python 3.12 and the NumPy 1.26.4 wheels
 

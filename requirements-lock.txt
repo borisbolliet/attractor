@@ -1,4 +1,4 @@
-# pip freeze of a Python 3.13.11 virtual environment (macOS, arm64) on 2026-10-29,
+# pip freeze of a Python 3.13.11 virtual environment (macOS, arm64) on 2026-11-09,
 # after: pip install -r requirements.txt
 annotated-types==0.8.0
 anyio==4.15.1
@@ -6,6 +6,7 @@ appnope==1.0.0
 asttokens==3.0.2
 comm==0.2.3
 contourpy==1.4.0
+coverage==7.17.2
 cycler==0.12.1
 debugpy==1.8.22
 executing==2.3.0
@@ -14,6 +15,7 @@ h11==0.16.0
 httpcore2==2.16.0
 httpx2==2.16.0
 idna==3.20
+iniconfig==2.3.1
 ipykernel==7.4.0
 ipython==9.17.1
 ipython_pygments_lexers==1.1.1
@@ -32,6 +34,7 @@ parso==0.8.7
 pexpect==4.9.0
 pillow==13.0.0
 platformdirs==4.14.0
+pluggy==1.7.0
 prompt_toolkit==3.0.53
 psutil==7.2.2
 ptyprocess==0.7.0
@@ -40,6 +43,8 @@ pydantic==2.14.1
 pydantic_core==2.50.1
 Pygments==2.21.0
 pyparsing==3.3.3
+pytest==9.2.0
+pytest-cov==7.1.0
 python-dateutil==3.0.0
 python-dotenv==1.2.4
 pyzmq==27.2.0

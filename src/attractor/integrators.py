@@ -14,10 +14,9 @@ def rk4_step(rhs, t, y, h):
     """One classical Runge-Kutta step of order four."""
     k1 = rhs(t, y)
     k2 = rhs(t + h / 2, y + h / 2 * k1)
-    k3 = rhs(t + h / 2, y + h / 2 * k2)
+    k3 = rhs(t + h / 2, y + h / 2 * k1)
     k4 = rhs(t + h, y + h * k3)
-    y = y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
-    return y
+    return y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
 
 
 def integrate(step, rhs, y0, t0, t1, h):

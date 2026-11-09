@@ -6,3 +6,6 @@ matplotlib>=3.8
 python-dotenv
 openai
 ipykernel
+# Tests (Lecture 15): pytest and its coverage plugin.
+pytest>=8
+pytest-cov>=6
