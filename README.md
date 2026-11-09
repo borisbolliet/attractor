@@ -56,6 +56,20 @@ placeholder and `load_dotenv()` does not override it. With the placeholder
 left in place the script stops with `ask_llm.py: cannot reach
 http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh again`.
 
+## Convergence test
+
+`test_order.py` is included at the repository root in both `lecture-15-start`
+and `lecture-15`. Run it explicitly:
+
+```bash
+python -m pytest -q test_order.py
+```
+
+At `lecture-15-start`, it fails with an estimated order of 2.04, revealing
+the deliberately incorrect RK4 step. At `lecture-15`, it passes with an
+estimated order of 4.06. The default `python -m pytest` command searches
+the directories configured in `pyproject.toml`, which exclude this file.
+
 ## Environment files
 
 1. **Interpreter and packages.** `requirements.txt` gives package
