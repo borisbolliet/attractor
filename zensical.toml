@@ -1,0 +1,11 @@
+# Zensical configuration: the documentation site, built from docs/ and the docstrings.
+[project]
+site_name = "attractor"
+site_url = "https://borisbolliet.github.io/attractor/"
+repo_url = "https://github.com/borisbolliet/attractor"
+nav = [{ "Home" = "index.md" }, { "API reference" = "api.md" }]
+
+# mkdocstrings reads the docstrings of the package in src/
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["src"]
+options = { docstring_style = "numpy" }

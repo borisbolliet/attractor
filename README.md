@@ -20,6 +20,13 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-12-start` | start of Lecture 12: the modules as the package `src/attractor`, `pyproject.toml` (version 1.0.0) and three console commands; `lynx_hare.csv` is not declared as package data, so the wheel leaves it out |
 | `lecture-12` | end of Lecture 12: `lynx_hare.csv` declared as package data, version 1.0.1 (`git diff lecture-12-start lecture-12`) |
 | `lecture-15-start` | start of Lecture 15: three tests in `tests/`, run with `python -m pytest`; `rk4_step` builds `k3` from `k1`, and the three tests still pass |
+| `lecture-15` | end of Lecture 15: `k3` from `k2`; convergence, property and integration tests, fixtures and parametrisation, doctests, `ValueError` for an invalid step, continuous integration and the documentation site; version 1.1.0, Python 3.13 or newer |
+
+## Documentation
+
+The documentation site, built from the docstrings of the package, is at
+<https://borisbolliet.github.io/attractor/>. Continuous integration rebuilds it
+after every push to `main` whose tests pass.
 
 ## Setup
 
@@ -28,7 +35,7 @@ git clone https://github.com/borisbolliet/attractor.git ~/GitHub/attractor
 cd ~/GitHub/attractor
 source setup_env.sh          # Python 3.13 venv, pinned packages, the project, .env, kernel attractor-py313
 attractor-periods            # table of periods and results/periods.csv
-python -m pytest             # the tests
+python -m pytest             # the tests and the examples of the docstrings
 python ask_llm.py            # optional: two sentences about the table from a language model
 ```
 
@@ -86,14 +93,16 @@ http://localhost:8080/v1; set LLM_BASE_URL in .env and run source setup_env.sh a
 | File | Role |
 |---|---|
 | `data/C1.csv` ... `data/C10.csv` | the ten runs; columns: time (days), algae (10^6 cells/ml), rotifers (animals/ml), egg ratio, eggs, dead animals, medium |
-| `pyproject.toml` | the package `attractor`: name, version, dependencies, the extras `fit` (SciPy), `plot` (Matplotlib) and `test` (pytest, pytest-cov), the console commands, the package data, the settings of pytest |
+| `pyproject.toml` | the package `attractor`: name, version, dependencies, the extras `fit` (SciPy), `plot` (Matplotlib), `test` (pytest, pytest-cov) and `docs` (Zensical, mkdocstrings), the console commands, the package data, the settings of pytest |
 | `src/attractor/__init__.py` | the public interface: the names listed in `__all__`, and `__version__` from the installed metadata |
 | `src/attractor/cli.py` | the console commands `attractor-simulate`, `attractor-periods` (the table of periods of the runs, `results/periods.csv`; `--plot FILE` for the figure) and `attractor-fit` (the lynx–hare fit) |
 | `src/attractor/datasets.py` | `load_run`, one chemostat run from its CSV file, and `lynx_hare`, the table in the package |
 | `src/attractor/models.py` | abstract class `DynamicalSystem` and the models `LotkaVolterra`, `RosenzweigMacArthur` and `Goodwin`; the factory functions of Lecture 9, registered by name; the chemostat parameters `CHEMOSTAT` |
 | `src/attractor/integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory` |
 | `src/attractor/cycles.py` | peak finder and cycle period |
-| `tests/` | the tests, run with `python -m pytest` from the repository root |
+| `tests/` | the tests, run with `python -m pytest` from the repository root, together with the examples of the docstrings: unit tests of the integrators, properties of the models, the console commands; `conftest.py` holds the shared fixture |
+| `.github/workflows/ci.yml` | continuous integration on GitHub Actions: the tests on Python 3.13 and 3.14, each with and without the `fit` extra, then the documentation site |
+| `docs/`, `zensical.toml` | the pages of the documentation site and its configuration; the API reference is built from the docstrings: `zensical build`, then `zensical serve` to view it |
 | `simulate.py` | integrates the chemostat model with the loop written out, prints its period and writes `results/simulated.png`; step size from `ATTRACTOR_H`; `attractor-simulate` runs the same model |
 | `puzzles/` | short scripts on names, calls, scopes, closures and imports (Lecture 9) |
 | `exercises/lecture09/` | scripts that check the answers to the exercises of Lecture 9 |
