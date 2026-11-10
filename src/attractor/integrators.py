@@ -71,13 +71,28 @@ def rk4_step(rhs, t, y, h):
 
 
 def check_step(h, t0=0.0, t1=None):
-    """Return the number of steps of size h from t0 to t1.
+    """Check a positive step size and, if given, its fit to an interval.
+
+    Parameters
+    ----------
+    h : float
+        Positive step size.
+    t0 : float, optional
+        Start time (default 0.0), used only when t1 is given.
+    t1 : float or None, optional
+        End time. If None, only check h and return None.
+
+    Returns
+    -------
+    int or None
+        Number of steps when t1 is supplied, otherwise None. The interval
+        check allows a relative tolerance of 1e-9 in its length.
 
     Raises
     ------
     ValueError
-        If h is not a positive number, or if t1 - t0 is not a whole number of
-        steps.
+        If h is non-positive or NaN, or the interval cannot be divided into
+        whole steps within the tolerance.
 
     Examples
     --------
@@ -99,32 +114,36 @@ def check_step(h, t0=0.0, t1=None):
 
 
 def integrate(step, rhs, y0, t0, t1, h):
-    """Integrate dy/dt = rhs(t, y) from t0 to t1 with a fixed step.
+    """Integrate dy/dt = rhs(t, y) over a forward interval with a fixed step.
 
     Parameters
     ----------
     step : callable
-        One step of the method, such as `euler_step` or `rk4_step`.
+        Function step(rhs, t, y, h) returning the next state, such as
+        euler_step or rk4_step. It must not modify y in place.
     rhs : callable
-        Right-hand side ``rhs(t, y)``.
-    y0 : sequence of float
-        State at time ``t0``.
+        Function rhs(t, y) returning the derivative with the same shape as y.
+    y0 : array_like, shape (k,)
+        Initial state at t0, copied into a floating-point array.
     t0, t1 : float
-        Start and end times.
+        Start and end times, with t1 >= t0.
     h : float
-        Step size; ``(t1 - t0) / h`` must be a whole number.
+        Positive step size. The interval must contain a whole number of
+        steps, allowing the tolerance used by check_step.
 
     Returns
     -------
-    t : numpy.ndarray
-        The n + 1 times, of shape (n + 1,).
-    y : numpy.ndarray
-        The states, of shape (n + 1, len(y0)).
+    t : numpy.ndarray, shape (n + 1,)
+        Sample times, including the initial time. Here n is the number
+        of steps, round((t1 - t0) / h).
+    y : numpy.ndarray, shape (n + 1, k)
+        State at each sample time. The first row is the initial state.
 
     Raises
     ------
     ValueError
-        If h is not positive, or if t1 - t0 is not a whole number of steps.
+        If h is non-positive or NaN, or the interval cannot be divided into
+        whole steps within the tolerance.
     """
     n = check_step(h, t0, t1)
     y = np.array(y0, dtype=float)
@@ -137,12 +156,22 @@ def integrate(step, rhs, y0, t0, t1, h):
 
 
 class Euler:
-    """Forward Euler with a fixed step h; runs any callable system.
+    """Forward Euler integration with a fixed step size.
+
+    Parameters
+    ----------
+    h : float
+        Positive step size, in the same time units as the system.
+
+    Attributes
+    ----------
+    h : float
+        Step size used by step and run.
 
     Raises
     ------
     ValueError
-        If h is not positive.
+        If h is non-positive or NaN.
     """
 
     def __init__(self, h):
@@ -150,22 +179,72 @@ class Euler:
         self.h = h
 
     def step(self, f, t, y):
-        """One step of size h from (t, y)."""
+        """Advance the state by one step of size self.h.
+
+        Parameters
+        ----------
+        f : callable
+            Function f(t, y) returning the time derivative of y.
+        t : float
+            Time at the start of the step.
+        y : float or numpy.ndarray
+            State at time t.
+
+        Returns
+        -------
+        float or numpy.ndarray
+            Approximate state at t + self.h.
+        """
         return euler_step(f, t, y, self.h)
 
     def run(self, system, y0, t0, t1):
-        """Integrate from t0 to t1; returns a Trajectory named after the system's states."""
+        """Integrate a system over a forward interval and return its trajectory.
+
+        Parameters
+        ----------
+        system : callable
+            Function or object called as system(t, y), returning the derivative
+            with the same shape as y. If it has a names attribute, that attribute
+            supplies the state names. Otherwise the names default to ("x", "z").
+        y0 : array_like, shape (k,)
+            Initial state at t0.
+        t0, t1 : float
+            Start and end times, with t1 >= t0. The interval must contain a
+            whole number of steps of size self.h, within check_step's tolerance.
+
+        Returns
+        -------
+        Trajectory
+            Sample times, state values and state names, including the initial
+            state and one row for each integration step.
+
+        Raises
+        ------
+        ValueError
+            If the interval cannot be divided into whole steps within the
+            tolerance, or self.h has been changed to a non-positive value or NaN.
+        """
         t, y = integrate(euler_step, system, y0, t0, t1, self.h)
         return Trajectory(t, y, getattr(system, "names", ("x", "z")))
 
 
 class RK4:
-    """Classical Runge-Kutta of order four with a fixed step h; runs any callable system.
+    """Classical fourth-order Runge-Kutta integration with a fixed step size.
+
+    Parameters
+    ----------
+    h : float
+        Positive step size, in the same time units as the system.
+
+    Attributes
+    ----------
+    h : float
+        Step size used by step and run.
 
     Raises
     ------
     ValueError
-        If h is not positive.
+        If h is non-positive or NaN.
     """
 
     def __init__(self, h):
@@ -173,10 +252,50 @@ class RK4:
         self.h = h
 
     def step(self, f, t, y):
-        """One step of size h from (t, y)."""
+        """Advance the state by one step of size self.h.
+
+        Parameters
+        ----------
+        f : callable
+            Function f(t, y) returning the time derivative of y.
+        t : float
+            Time at the start of the step.
+        y : float or numpy.ndarray
+            State at time t.
+
+        Returns
+        -------
+        float or numpy.ndarray
+            Approximate state at t + self.h.
+        """
         return rk4_step(f, t, y, self.h)
 
     def run(self, system, y0, t0, t1):
-        """Integrate from t0 to t1; returns a Trajectory named after the system's states."""
+        """Integrate a system over a forward interval and return its trajectory.
+
+        Parameters
+        ----------
+        system : callable
+            Function or object called as system(t, y), returning the derivative
+            with the same shape as y. If it has a names attribute, that attribute
+            supplies the state names. Otherwise the names default to ("x", "z").
+        y0 : array_like, shape (k,)
+            Initial state at t0.
+        t0, t1 : float
+            Start and end times, with t1 >= t0. The interval must contain a
+            whole number of steps of size self.h, within check_step's tolerance.
+
+        Returns
+        -------
+        Trajectory
+            Sample times, state values and state names, including the initial
+            state and one row for each integration step.
+
+        Raises
+        ------
+        ValueError
+            If the interval cannot be divided into whole steps within the
+            tolerance, or self.h has been changed to a non-positive value or NaN.
+        """
         t, y = integrate(rk4_step, system, y0, t0, t1, self.h)
         return Trajectory(t, y, getattr(system, "names", ("x", "z")))
