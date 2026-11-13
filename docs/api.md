@@ -7,3 +7,5 @@
 ::: attractor.trajectory
 
 ::: attractor.cycles
+
+::: attractor.patterns
