@@ -21,6 +21,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-12` | end of Lecture 12: `lynx_hare.csv` declared as package data, version 1.0.1 (`git diff lecture-12-start lecture-12`) |
 | `lecture-15-start` | start of Lecture 15: three tests in `tests/`, run with `python -m pytest`; `rk4_step` builds `k3` from `k1`, and the three tests still pass |
 | `lecture-15` | end of Lecture 15: `k3` from `k2`; convergence, property and integration tests, fixtures and parametrisation, doctests, `ValueError` for an invalid step, continuous integration and the documentation site; version 1.1.0, Python 3.13 or newer |
+| `lecture-17-start` | start of Lecture 17: the Gray-Scott model in `src/attractor/patterns.py`, with a Laplacian written as two loops over the grid points |
 
 ## Documentation
 
@@ -114,6 +115,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `src/attractor/models.py` | abstract class `DynamicalSystem` and the models `LotkaVolterra`, `RosenzweigMacArthur` and `Goodwin`; the factory functions of Lecture 9, registered by name; the chemostat parameters `CHEMOSTAT` |
 | `src/attractor/integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory` |
 | `src/attractor/cycles.py` | peak finder and cycle period |
+| `src/attractor/patterns.py` | the Gray-Scott reaction-diffusion model on a periodic grid: Laplacian, initial state, time step, run |
 | `tests/` | the tests, run with `python -m pytest` from the repository root, together with the examples of the docstrings: unit tests of the integrators, properties of the models, the console commands; `conftest.py` holds the shared fixture |
 | `.github/workflows/ci.yml` | continuous integration on GitHub Actions: the tests on Python 3.13 and 3.14, each with and without the `fit` extra, then the documentation site |
 | `docs/`, `zensical.toml` | the pages of the documentation site and its configuration; the API reference is built from the docstrings: `zensical build`, then `zensical serve` to view it |
@@ -137,6 +139,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `lecture12.ipynb` | the notebook of Lecture 12, run with the same kernel; its wheels are built in a temporary clone |
 | `lecture12-mine.ipynb` | the notebook of Lecture 12 as run in the lecture, with its outputs |
 | `lecture15.ipynb` | the notebook of Lecture 15, run with the same kernel; the cells that change the code work in a temporary clone |
+| `lecture17.ipynb` | the notebook of Lecture 17: arrays, views and strides, broadcasting, the vectorised stencil, its cost and its stability |
 | `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, the versions and locations of NumPy and `attractor`, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |
