@@ -23,6 +23,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-15` | end of Lecture 15: `k3` from `k2`; convergence, property and integration tests, fixtures and parametrisation, doctests, `ValueError` for an invalid step, continuous integration and the documentation site; version 1.1.0, Python 3.13 or newer |
 | `lecture-17-start` | start of Lecture 17: the Gray-Scott model in `src/attractor/patterns.py`, with a Laplacian written as two loops over the grid points |
 | `lecture-17` | end of Lecture 17: the Laplacian as whole-array operations on padded views; batches of grids, one per (F, k), by broadcasting; tests against the loop version; version 1.2.0 |
+| `lecture-18-start` | start of Lecture 18: `src/attractor/modes.py`, the leading eigenvectors of the Gram matrix of Gray-Scott snapshots by `eigh` and by a randomised range finder; the range finder orthonormalises its repeated products only at the end, and in float32 it loses the subspace |
 
 ## Documentation
 
@@ -117,6 +118,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `src/attractor/integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory` |
 | `src/attractor/cycles.py` | peak finder and cycle period |
 | `src/attractor/patterns.py` | the Gray-Scott reaction-diffusion model on periodic grids: Laplacian, initial state, time step, run; the last two axes are the grid, earlier axes a batch |
+| `src/attractor/modes.py` | leading eigenvectors of a symmetric matrix: snapshots of a Gray-Scott run and their Gram matrix, `eigh` with the largest eigenvalue first, the randomised range finder and eigensolver, principal angles between subspaces |
 | `tests/` | the tests, run with `python -m pytest` from the repository root, together with the examples of the docstrings: unit tests of the integrators, properties of the models, the console commands; `conftest.py` holds the shared fixture |
 | `.github/workflows/ci.yml` | continuous integration on GitHub Actions: the tests on Python 3.13 and 3.14, each with and without the `fit` extra, then the documentation site |
 | `docs/`, `zensical.toml` | the pages of the documentation site and its configuration; the API reference is built from the docstrings: `zensical build`, then `zensical serve` to view it |
@@ -141,6 +143,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `lecture12-mine.ipynb` | the notebook of Lecture 12 as run in the lecture, with its outputs |
 | `lecture15.ipynb` | the notebook of Lecture 15, run with the same kernel; the cells that change the code work in a temporary clone |
 | `lecture17.ipynb` | the notebook of Lecture 17: arrays, views and strides, broadcasting, the vectorised stencil, its cost and its stability |
+| `lecture18.ipynb` | the notebook of Lecture 18: the leading modes of a Gray-Scott run, `eigh` against the randomised eigensolver, the loss of the subspace in float32, tests with principal angles, the roofline of the lecture laptop |
 | `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, the versions and locations of NumPy and `attractor`, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |
