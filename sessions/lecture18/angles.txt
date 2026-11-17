@@ -1,0 +1,13 @@
+Lecture 18, principal angles: two bases of one plane give angles 0; a plane tilted by 30 degrees about a common line gives angles 0 and 30 degrees.
+    python -m doctest -v sessions/lecture18/angles.txt
+
+>>> import numpy as np
+>>> from attractor.modes import principal_angles
+>>> U = np.eye(3)[:, :2]                # the plane z = 0
+>>> V = -U[:, ::-1]                     # the same plane, other order and signs
+>>> np.allclose(U, V), principal_angles(U, V)
+(False, array([0., 0.]))
+>>> t = np.radians(30)
+>>> W = np.column_stack([U[:, 0], [0.0, np.cos(t), np.sin(t)]])
+>>> np.degrees(principal_angles(U, W)).round(6)
+array([ 0., 30.])

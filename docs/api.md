@@ -9,3 +9,5 @@
 ::: attractor.cycles
 
 ::: attractor.patterns
+
+::: attractor.modes

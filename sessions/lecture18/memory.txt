@@ -1,0 +1,10 @@
+Lecture 18, the largest number of snapshots for which X and A fit in 64 GB in float64: the positive root of 8 n^2 + 8 p n = 64e9, rounded down.
+    python -m doctest -v sessions/lecture18/memory.txt
+
+>>> import math
+>>> p, M = 16384, 64e9                  # values per snapshot, bytes available
+>>> n = math.floor((-8 * p + math.sqrt((8 * p)**2 + 4 * 8 * M)) / 16)
+>>> n, 8 * n * p + 8 * n**2 <= M < 8 * (n + 1) * p + 8 * (n + 1)**2
+(81625, True)
+>>> round(8 * n**2 / 1e9, 1), round(8 * n * p / 1e9, 1)    # GB of A and of X
+(53.3, 10.7)

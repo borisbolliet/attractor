@@ -68,14 +68,13 @@ def range_finder(A, l, q, rng):
 
     The columns of the Gaussian sketch A @ Omega are random combinations of the
     columns of A. Each of the q power iterations multiplies by A twice. A QR
-    factorisation of the last product gives the orthonormal columns.
+    factorisation after every product keeps the columns orthonormal.
     A is symmetric positive-semidefinite, float32 or float64; Omega has the same dtype.
     """
     Omega = rng.standard_normal((A.shape[0], l), dtype=A.dtype)
-    Y = A @ Omega                      # the Gaussian sketch
+    Q, _ = np.linalg.qr(A @ Omega)     # the sketch, orthonormalised
     for _ in range(2 * q):
-        Y = A @ Y                      # two products per power iteration
-    Q, _ = np.linalg.qr(Y)             # orthonormalise once, at the end
+        Q, _ = np.linalg.qr(A @ Q)     # orthonormalise after every product
     return Q
 
 
@@ -92,6 +91,21 @@ def randomised_eigh(A, k, l=None, q=2, seed=0):
     Q = range_finder(A, l, q, np.random.default_rng(seed))
     w, V = leading_eigh(Q.T @ (A @ Q), k)    # the l x l eigenproblem
     return w, Q @ V
+
+
+def rsvd(A, k, q, Omega):
+    """Approximate k leading eigenvectors of a positive-semidefinite matrix.
+
+    A has shape (n, n); the supplied Gaussian sketch Omega has shape (n, l),
+    with k <= l <= n. Perform q pairs of power products, with QR between
+    pairs, then an SVD of Q.T @ A. Return an (n, k) orthonormal basis.
+    This is the NumPy counterpart of the coursework recurrence.
+    """
+    Q, _ = np.linalg.qr(A @ Omega)
+    for _ in range(q):
+        Q, _ = np.linalg.qr(A @ (A @ Q))
+    Uh, _, _ = np.linalg.svd(Q.T @ A, full_matrices=False)
+    return Q @ Uh[:, :k]
 
 
 def principal_angles(U, V):

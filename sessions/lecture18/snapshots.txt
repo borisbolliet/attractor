@@ -1,0 +1,22 @@
+Lecture 18, the working example: 4096 snapshots of one Gray-Scott run as the rows of X, their Gram matrix A, and the eigenvalues of A from eigh, smallest first.
+    python -m doctest -v sessions/lecture18/snapshots.txt
+
+>>> import numpy as np
+>>> from attractor.modes import gram, snapshots
+>>> from attractor.patterns import SPOTS
+>>> X = snapshots(*SPOTS, count=4096, every=2, grid=128)
+>>> X.shape, X.nbytes / 2**20
+((4096, 16384), 512.0)
+>>> A = gram(X)
+>>> A.shape, A.nbytes / 2**20
+((4096, 4096), 128.0)
+>>> bool((A == A.T).all())
+True
+>>> w, U = np.linalg.eigh(A)
+>>> bool(np.abs(w[:3]).max() < 1e-13)
+True
+>>> w[-3:].round(4)
+array([ 4.6259,  6.092 , 10.5837])
+>>> share = np.cumsum(w[::-1]) / w.sum()
+>>> share[[0, 9, 19]].round(3)
+array([0.374, 0.951, 0.989])

@@ -1,0 +1,58 @@
+Lecture 18, the checks of the solutions to the exercises: eigh's order, the counts of a randomised eigensolver, principal angles of three bases, three kernels on the laptop's roofline, log-log slopes and a memory limit, the ridge point of a sketch product.
+    python -m doctest -v sessions/lecture18/exercises.txt
+
+>>> import numpy as np
+>>> from attractor.modes import principal_angles
+>>> B = np.array([[3.0, 1.0, 0.0], [1.0, 3.0, 0.0], [0.0, 0.0, 1.0]])
+>>> w, U = np.linalg.eigh(B)
+>>> w.round(12), np.abs(U[:, -1]).round(4)
+(array([1., 2., 4.]), array([0.7071, 0.7071, 0.    ]))
+>>> np.degrees(principal_angles(U[:, -2:], U[:, ::-1][:, :2])).round(6)
+array([0., 0.])
+>>> n, k, l, q = 9000, 6, 16, 3
+>>> F, D = 4 * (q + 1) * n**2 * l, 2 * (q + 1) * 4 * n**2
+>>> f"{F:.3g} {D:.3g} {F / D:g} {9 * n / (4 * (q + 1) * l):.0f}"
+'2.07e+10 2.59e+09 8 316'
+>>> [f"{0.05 ** (2 * q + 1):.1e}" for q in (2, 3, 5, 6)]
+['3.1e-07', '7.8e-10', '4.9e-15', '1.2e-17']
+>>> e = np.eye(4); U = e[:, :2]
+>>> V1 = np.column_stack([e[:, 0] + e[:, 1], e[:, 0] - e[:, 1]]) / np.sqrt(2)
+>>> V2 = np.column_stack([e[:, 0], (e[:, 1] + e[:, 2]) / np.sqrt(2)])
+>>> V3 = np.column_stack([-e[:, 1], e[:, 0]])
+>>> [np.allclose(U, V) for V in (V1, V2, V3)]
+[False, False, False]
+>>> [np.degrees(principal_angles(U, V)).round(6).tolist() for V in (V1, V2, V3)]
+[[0.0, 0.0], [0.0, 45.0], [0.0, 0.0]]
+>>> P, W = 3230e9, 307e9
+>>> kernels = [("A @ x", 2 * 8192**2, 4 * 8192**2, 1.21e-3),
+...            ("A @ A", 2 * 8192**3, 12 * 8192**2, 0.356),
+...            ("eigh", 9 * 2048**3, 8 * 2048**2, 0.573)]
+>>> for name, F, D, t in kernels:
+...     roof = max(F / P, D / W)
+...     print(name, round(F / D, 1), round(1e3 * roof, 3), round(F / t / 1e9),
+...           round(100 * F / t / P, 1), round(roof / t, 2))
+A @ x 0.5 0.874 111 3.4 0.72
+A @ A 1365.3 340.406 3089 95.6 0.96
+eigh 2304.0 23.935 135 4.2 0.04
+>>> import math
+>>> eigh, rand = [72.3, 567, 4659], [2.01, 5.08, 11.84]
+>>> slopes = lambda t: [round(math.log2(y / x), 2) for x, y in zip(t, t[1:])]
+>>> slopes(eigh), slopes(rand)
+([2.97, 3.04], [1.34, 1.22])
+>>> p = 16384
+>>> n = math.floor((-4 * p + math.sqrt(16 * p**2 + 4 * 8 * 16e9)) / 16)
+>>> n, 4 * n * p + 8 * n**2 <= 16e9 < 4 * (n + 1) * p + 8 * (n + 1)**2
+(40812, True)
+>>> P, W, n = 40e12, 2.0e12, 20000
+>>> I = lambda l: 2 * n**2 * l / (4 * (n**2 + 2 * n * l))
+>>> I_star = P / W
+>>> round(2 * I_star * n / (n - 4 * I_star), 1)
+40.2
+>>> [round(I(l), 1) for l in (32, 64)]
+[15.9, 31.8]
+>>> t_roof = lambda l: max(2 * n**2 * l / P, 4 * (n**2 + 2 * n * l) / W)
+>>> [round(1e3 * t_roof(l), 3) for l in (16, 32)]
+[0.801, 0.803]
+>>> F, D = 4 * 3 * n**2 * 32, 2 * 3 * 4 * n**2
+>>> round(1e3 * F / P, 2), round(1e3 * D / W, 2), F / D
+(3.84, 4.8, 16.0)

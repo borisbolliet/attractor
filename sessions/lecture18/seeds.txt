@@ -1,0 +1,14 @@
+Lecture 18, a fixed seed: two generators made from the same seed draw the same numbers, and default_rng returns a generator it is given unchanged.
+    python -m doctest -v sessions/lecture18/seeds.txt
+
+>>> import numpy as np
+>>> a = np.random.default_rng(42).standard_normal(3)
+>>> b = np.random.default_rng(42).standard_normal(3)
+>>> bool((a == b).all())
+True
+>>> c = np.random.default_rng(43).standard_normal(3)
+>>> bool((a == c).any())
+False
+>>> rng = np.random.default_rng(42)
+>>> np.random.default_rng(rng) is rng
+True

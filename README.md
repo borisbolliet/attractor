@@ -24,6 +24,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-17-start` | start of Lecture 17: the Gray-Scott model in `src/attractor/patterns.py`, with a Laplacian written as two loops over the grid points |
 | `lecture-17` | end of Lecture 17: the Laplacian as whole-array operations on padded views; batches of grids, one per (F, k), by broadcasting; tests against the loop version; version 1.2.0 |
 | `lecture-18-start` | start of Lecture 18: `src/attractor/modes.py`, the leading eigenvectors of the Gram matrix of Gray-Scott snapshots by `eigh` and by a randomised range finder; the range finder orthonormalises its repeated products only at the end, and in float32 it loses the subspace |
+| `lecture-18` | end of Lecture 18: the range finder orthonormalises after every product; `rsvd`, the randomised SVD of the coursework; tests against `eigh` on matrices with a known spectrum, with fixed seeds and principal angles; version 1.3.0 |
 
 ## Documentation
 
@@ -135,6 +136,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `sessions/lecture12/` | interpreter sessions of the Lecture 12 notes, checked with `python -m doctest sessions/lecture12/*.txt` |
 | `sessions/lecture11/` | interpreter sessions of the Lecture 11 notes, checked with `python -m doctest sessions/lecture11/*.txt` |
 | `sessions/lecture10/` | interpreter sessions of the Lecture 10 notes, checked with `python -m doctest sessions/lecture10/*.txt` |
+| `sessions/lecture18/` | interpreter sessions of the Lecture 18 notes, checked with `python -m doctest sessions/lecture18/*.txt` |
 | `lecture10.ipynb` | the notebook of Lecture 10, run with the kernel `Python (attractor 3.13)` |
 | `lecture10-mine.ipynb` | the notebook of Lecture 10 as run in the lecture, with its outputs |
 | `lecture11.ipynb` | the notebook of Lecture 11, run with the same kernel |

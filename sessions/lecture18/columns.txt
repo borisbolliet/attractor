@@ -1,0 +1,27 @@
+Lecture 18, columns against subspaces: the randomised eigenvectors of the snapshot matrix differ from eigh's in sign only; with a double eigenvalue, the two bases of its plane differ by a rotation.
+    python -m doctest -v sessions/lecture18/columns.txt
+
+>>> import numpy as np
+>>> from attractor.modes import gram, leading_eigh, principal_angles, randomised_eigh, snapshots
+>>> from attractor.patterns import SPOTS
+>>> A = gram(snapshots(*SPOTS, count=4096, every=2, grid=128))
+>>> w_ref, U_ref = leading_eigh(A, 10)
+>>> w, U = randomised_eigh(A, 10, q=8, seed=0)
+>>> np.allclose(U, U_ref)
+False
+>>> signs = np.sign(np.sum(U * U_ref, axis=0))   # +1 or -1 per column
+>>> int((signs < 0).sum()), np.allclose(U * signs, U_ref)
+(3, True)
+>>> bool(principal_angles(U, U_ref).max() < 1e-13)
+True
+>>> V, _ = np.linalg.qr(np.random.default_rng(1).standard_normal((6, 6)))
+>>> C = (V * [5.0, 5.0, 2.0, 1.0, 0.5, 0.1]) @ V.T   # 5 is a double eigenvalue
+>>> _, U_ref = leading_eigh(C, 2)
+>>> _, U = randomised_eigh(C, 2, l=4, q=8, seed=0)
+>>> np.allclose(np.abs(U), np.abs(U_ref))
+False
+>>> bool(principal_angles(U, U_ref).max() < 1e-14)
+True
+>>> (U_ref.T @ U).round(3)                       # a rotation of the plane
+array([[-0.023, -1.   ],
+       [ 1.   , -0.023]])

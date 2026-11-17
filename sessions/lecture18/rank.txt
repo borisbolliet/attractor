@@ -1,0 +1,12 @@
+Lecture 18, a sketch of a matrix of rank 2: two random combinations of its columns span the same plane as its two eigenvectors.
+    python -m doctest -v sessions/lecture18/rank.txt
+
+>>> import numpy as np
+>>> rng = np.random.default_rng(2)
+>>> u, _ = np.linalg.qr(rng.standard_normal((5, 2)))
+>>> A = 3.0 * np.outer(u[:, 0], u[:, 0]) + np.outer(u[:, 1], u[:, 1])
+>>> np.linalg.matrix_rank(A)
+np.int64(2)
+>>> Y = A @ rng.standard_normal((5, 2))         # a sketch with two columns
+>>> np.linalg.matrix_rank(np.column_stack([Y, u]))
+np.int64(2)

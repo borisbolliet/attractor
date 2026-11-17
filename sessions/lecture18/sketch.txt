@@ -1,0 +1,19 @@
+Lecture 18, the shapes through the randomised method: a Gaussian sketch of the 4096 x 4096 matrix A, its orthonormal basis Q, the 20 x 20 matrix Q^T A Q and the ten approximate eigenvectors.
+    python -m doctest -v sessions/lecture18/sketch.txt
+
+>>> import numpy as np
+>>> from attractor.modes import gram, snapshots
+>>> from attractor.patterns import SPOTS
+>>> A = gram(snapshots(*SPOTS, count=4096, every=2, grid=128))
+>>> rng = np.random.default_rng(0)
+>>> Omega = rng.standard_normal((4096, 20))
+>>> Y = A @ Omega
+>>> Q, R = np.linalg.qr(Y)
+>>> Omega.shape, Y.shape, Q.shape, R.shape
+((4096, 20), (4096, 20), (4096, 20), (20, 20))
+>>> np.allclose(Q.T @ Q, np.eye(20))
+True
+>>> B = Q.T @ (A @ Q)
+>>> mu, V = np.linalg.eigh(B)
+>>> B.shape, (Q @ V[:, ::-1][:, :10]).shape
+((20, 20), (4096, 10))

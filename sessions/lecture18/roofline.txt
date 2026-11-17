@@ -1,0 +1,17 @@
+Lecture 18, the roofline of the lecture laptop in float64: operations, bytes and intensity of the randomised method and of eigh at n = 4096, their roofline times and the sketch width at the ridge.
+    python -m doctest -v sessions/lecture18/roofline.txt
+
+>>> n, l, q, b = 4096, 20, 2, 8          # float64: 8 bytes per value
+>>> P, W = 787e9, 307e9                  # FLOP/s and bytes/s of the laptop
+>>> F = 4 * (q + 1) * n**2 * l           # 2(q + 1) products of 2 n^2 l
+>>> D = 2 * (q + 1) * b * n**2           # one read of A per product
+>>> F / D, round(P / W, 2)
+(5.0, 2.56)
+>>> round(1e3 * F / P, 2), round(1e3 * D / W, 2)   # milliseconds
+(5.12, 2.62)
+>>> F_eigh, D_eigh = 9 * n**3, 2 * b * n**2
+>>> F_eigh / D_eigh, round(F_eigh / P, 3), round(F_eigh / F, 1)
+(2304.0, 0.786, 153.6)
+>>> I_star = P / W
+>>> round(I_star * b * n / (2 * n - 2 * b * I_star), 1)   # l*
+10.3
