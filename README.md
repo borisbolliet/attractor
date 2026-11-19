@@ -25,6 +25,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-17` | end of Lecture 17: the Laplacian as whole-array operations on padded views; batches of grids, one per (F, k), by broadcasting; tests against the loop version; version 1.2.0 |
 | `lecture-18-start` | start of Lecture 18: `src/attractor/modes.py`, the leading eigenvectors of the Gram matrix of Gray-Scott snapshots by `eigh` and by a randomised range finder; the range finder orthonormalises its repeated products only at the end, and in float32 it loses the subspace |
 | `lecture-18` | end of Lecture 18: the range finder orthonormalises after every product; `rsvd`, the randomised SVD of the coursework; tests against `eigh` on matrices with a known spectrum, with fixed seeds and principal angles; version 1.3.0 |
+| `lecture-19-start` | start of Lecture 19: the Oregonator model of the Belousov–Zhabotinsky reaction; RK4 at a fixed step overflows on it; `Adaptive` wraps SciPy's `solve_ivp`, with RK45 by default; `rk4_factor` written with powers; scripts that profile, line-profile and time the runs |
 
 ## Documentation
 
@@ -85,8 +86,8 @@ the directories configured in `pyproject.toml`, which exclude this file.
 
 1. **Interpreter and packages.** `requirements.txt` gives package
    constraints (`numpy>=1.26`, `matplotlib>=3.8`, ...). `requirements-lock.txt`
-   is a `pip freeze` snapshot of 59 installed distributions from a Python
-   3.13.11 macOS arm64 environment, created on 2026-11-09. `pip freeze`
+   is a `pip freeze` snapshot of 62 installed distributions from a Python
+   3.13.11 macOS arm64 environment, created on 2026-11-12. `pip freeze`
    reports installed versions; it does not solve requirements or create a
    cross-platform lockfile. `setup_env.sh` installs the snapshot. The venv,
    `.venv/`, is a build product and is not committed.
@@ -115,8 +116,8 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `src/attractor/__init__.py` | the public interface: the names listed in `__all__`, and `__version__` from the installed metadata |
 | `src/attractor/cli.py` | the console commands `attractor-simulate`, `attractor-periods` (the table of periods of the runs, `results/periods.csv`; `--plot FILE` for the figure) and `attractor-fit` (the lynx–hare fit) |
 | `src/attractor/datasets.py` | `load_run`, one chemostat run from its CSV file, and `lynx_hare`, the table in the package |
-| `src/attractor/models.py` | abstract class `DynamicalSystem` and the models `LotkaVolterra`, `RosenzweigMacArthur` and `Goodwin`; the factory functions of Lecture 9, registered by name; the chemostat parameters `CHEMOSTAT` |
-| `src/attractor/integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory` |
+| `src/attractor/models.py` | abstract class `DynamicalSystem` and the models `LotkaVolterra`, `RosenzweigMacArthur`, `Goodwin` and `Oregonator` (the Belousov–Zhabotinsky reaction); the factory functions of Lecture 9, registered by name; the chemostat parameters `CHEMOSTAT` |
+| `src/attractor/integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory`; `rk4_factor`, the factor by which one RK4 step multiplies the solution of dy/dt = λy; `Adaptive`, adaptive steps by SciPy's `solve_ivp` |
 | `src/attractor/cycles.py` | peak finder and cycle period |
 | `src/attractor/patterns.py` | the Gray-Scott reaction-diffusion model on periodic grids: Laplacian, initial state, time step, run; the last two axes are the grid, earlier axes a batch |
 | `src/attractor/modes.py` | leading eigenvectors of a symmetric matrix: snapshots of a Gray-Scott run and their Gram matrix, `eigh` with the largest eigenvalue first, the randomised range finder and eigensolver, principal angles between subspaces |
@@ -126,8 +127,8 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `simulate.py` | integrates the chemostat model with the loop written out, prints its period and writes `results/simulated.png`; step size from `ATTRACTOR_H`; `attractor-simulate` runs the same model |
 | `puzzles/` | short scripts on names, calls, scopes, closures and imports (Lecture 9) |
 | `exercises/lecture09/` | scripts that check the answers to the exercises of Lecture 9 |
-| `src/attractor/tools.py` | decorators `counted`, `timed` and `register`, and `REGISTRY`, the model factories by name |
-| `experiments/` | scripts of Lectures 10 and 11; with the project installed they also run as files from any folder |
+| `src/attractor/tools.py` | decorators `counted`, `timed` and `register`, and `REGISTRY`, the model factories by name; `median_time`, the median time of repeated calls after an untimed one |
+| `experiments/` | scripts of Lectures 10, 11 and 19; with the project installed they also run as files from any folder |
 | `exercises/lecture10/` | scripts that check the answers to the exercises of Lecture 10 |
 | `src/attractor/trajectory.py` | class `Trajectory`: the times and states of one run |
 | `src/attractor/data/lynx_hare.csv` | lynx and snowshoe hare pelts traded by the Hudson's Bay Company, 1900–1920, in thousands; package data read by `attractor.lynx_hare()` |
@@ -149,7 +150,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, the versions and locations of NumPy and `attractor`, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |
-| `requirements.txt` | package specification: the five imported packages, ipykernel, pytest and pytest-cov |
+| `requirements.txt` | package specification: the five imported packages, ipykernel, pytest and pytest-cov, line_profiler and numba |
 | `requirements-lock.txt` | `pip freeze` snapshot, Python 3.13.11 on macOS arm64 (Python 3.12.12 up to `lecture-09`) |
 | `.env.example` | configuration template; copied to `.env` by `setup_env.sh` |
 | `setup_env.sh` | one-step setup, to be sourced |

@@ -1,5 +1,6 @@
 """Decorators of the project: call counting, timing and a registry of model factories."""
 import functools
+import statistics
 import time
 
 
@@ -31,6 +32,22 @@ def timed(f):
     wrapper.seconds = 0.0
     wrapper.calls = 0
     return wrapper
+
+
+def median_time(f, *args, repeat=5):
+    """Return the median wall time, in seconds, of `repeat` calls f(*args).
+
+    One untimed call comes first: it absorbs one-off costs such as imports,
+    caches and compilation. The median is less affected than the mean by an
+    occasional slow call.
+    """
+    f(*args)
+    times = []
+    for _ in range(repeat):
+        start = time.perf_counter()
+        f(*args)
+        times.append(time.perf_counter() - start)
+    return statistics.median(times)
 
 
 REGISTRY = {}

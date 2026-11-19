@@ -184,6 +184,52 @@ class Goodwin(DynamicalSystem):
         return f"Goodwin(alpha={self.alpha}, beta={self.beta}, rho={self.rho}, gamma={self.gamma})"
 
 
+@dataclass(frozen=True)
+class Oregonator(DynamicalSystem):
+    """Model the Belousov-Zhabotinsky reaction with the Oregonator of Field and Noyes.
+
+    The scaled concentrations of HBrO2, Br- and Ce(IV) are a, e and r:
+
+        da/dt = s * (e - e*a + a - q*a**2)
+        de/dt = (-e - e*a + f*r) / s
+        dr/dt = w * (a - r)
+
+    Parameters
+    ----------
+    s : float, optional
+        Ratio of the time scales of a and e (default 77.27).
+    q : float, optional
+        Coefficient of the quadratic loss of a (default 8.375e-6).
+    w : float, optional
+        Rate at which r relaxes towards a (default 0.161).
+    f : float, optional
+        Stoichiometric factor of the production of e (default 1.0).
+
+    Notes
+    -----
+    a, e and r stand for the alpha, eta and rho of Field and Noyes (1974),
+    whose parameter values are the defaults. With the initial state (1, 2, 3)
+    on 0 <= t <= 360, they form the stiff test problem OREGO of Hairer and
+    Wanner (1996). a then ranges from about 1 to 1.2e5, and the solution has
+    a period of about 303 time units.
+    """
+    s: float = 77.27
+    q: float = 8.375e-6
+    w: float = 0.161
+    f: float = 1.0
+    names = ("HBrO2", "Br-", "Ce(IV)")
+
+    def rhs(self, t, y):
+        """Return (da/dt, de/dt, dr/dt) for y = (a, e, r); no explicit t dependence.
+
+        The state may also be a batch of states of shape (3, n).
+        """
+        a, e, r = y
+        return np.array([self.s * (e - e * a + a - self.q * a * a),
+                         (-e - e * a + self.f * r) / self.s,
+                         self.w * (a - r)])
+
+
 @runtime_checkable
 class HasRHS(Protocol):
     """Anything with an rhs(t, y) method, inheritance or not."""

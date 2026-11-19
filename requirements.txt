@@ -9,3 +9,6 @@ ipykernel
 # Tests (Lecture 15): pytest and its coverage plugin.
 pytest>=8
 pytest-cov>=6
+# Profiling and compilation (Lecture 19): line_profiler and Numba.
+line_profiler>=4.1
+numba>=0.61

@@ -1,7 +1,7 @@
-"""Fixed-step explicit integrators.
+"""Fixed-step explicit integrators, and adaptive integration with SciPy.
 
-`integrate` returns the times and the states as arrays; `Euler(h).run` and
-`RK4(h).run` return a `Trajectory`.
+`integrate` returns the times and the states as arrays; `Euler(h).run`,
+`RK4(h).run` and `Adaptive(method).run` return a `Trajectory`.
 """
 import numpy as np
 
@@ -68,6 +68,34 @@ def rk4_step(rhs, t, y, h):
     k3 = rhs(t + h / 2, y + h / 2 * k2)
     k4 = rhs(t + h, y + h * k3)
     return y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+
+
+def rk4_factor(z):
+    """Amplification factor of one RK4 step for dy/dt = lam * y, at z = h * lam.
+
+    One step multiplies y by R(z) = 1 + z + z**2/2 + z**3/6 + z**4/24. The
+    step is stable when |R(z)| <= 1; on the negative real axis this holds
+    for -2.785 <= z <= 0.
+
+    Parameters
+    ----------
+    z : complex or numpy.ndarray
+        Products of the step size and an eigenvalue of the Jacobian.
+
+    Returns
+    -------
+    complex or numpy.ndarray
+        R(z), with the shape of z.
+
+    Examples
+    --------
+    >>> float(rk4_factor(-1.0)), float(rk4_factor(-3.0))
+    (0.375, 1.375)
+    """
+    z2 = z ** 2
+    z3 = z ** 3
+    z4 = z ** 4
+    return 1 + z + z2 / 2 + z3 / 6 + z4 / 24
 
 
 def check_step(h, t0=0.0, t1=None):
@@ -299,3 +327,61 @@ class RK4:
         """
         t, y = integrate(rk4_step, system, y0, t0, t1, self.h)
         return Trajectory(t, y, getattr(system, "names", ("x", "z")))
+
+
+class Adaptive:
+    """Integration with adaptive steps by scipy.integrate.solve_ivp.
+
+    SciPy is an optional dependency: pip install "attractor[fit]".
+
+    Parameters
+    ----------
+    method : str, optional
+        A method of solve_ivp: "RK45" (explicit), or "Radau", "BDF" or
+        "LSODA" (implicit, for stiff equations). Default "RK45".
+    rtol, atol : float, optional
+        Relative and absolute tolerances of the estimated local error
+        (default 1e-6 for both).
+
+    Attributes
+    ----------
+    stats : dict
+        After run: the numbers of steps, of evaluations of the right-hand
+        side ("nfev"), of the Jacobian ("njev") and of LU decompositions ("nlu").
+    """
+
+    def __init__(self, method="RK45", rtol=1e-6, atol=1e-6):
+        self.method, self.rtol, self.atol = method, rtol, atol
+        self.stats = {}
+
+    def run(self, system, y0, t0, t1):
+        """Integrate a system from t0 to t1 and return its trajectory at the accepted steps.
+
+        Parameters
+        ----------
+        system : callable
+            Function or object called as system(t, y). A names attribute
+            supplies the state names.
+        y0 : array_like, shape (k,)
+            Initial state at t0.
+        t0, t1 : float
+            Start and end times.
+
+        Returns
+        -------
+        Trajectory
+            Times and states at the steps the solver accepted.
+
+        Raises
+        ------
+        RuntimeError
+            If the solver stops before t1.
+        """
+        from scipy.integrate import solve_ivp  # optional dependency: the fit extra
+
+        sol = solve_ivp(system, (t0, t1), y0, method=self.method,
+                        rtol=self.rtol, atol=self.atol)
+        if not sol.success:
+            raise RuntimeError(f"{self.method}: {sol.message}")
+        self.stats = dict(steps=len(sol.t) - 1, nfev=sol.nfev, njev=sol.njev, nlu=sol.nlu)
+        return Trajectory(sol.t, sol.y.T, getattr(system, "names", ("x", "z")))
