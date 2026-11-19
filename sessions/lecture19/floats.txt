@@ -1,0 +1,15 @@
+Lecture 19, overflow to inf, inf - inf, and NumPy floating-point errors raised as exceptions.
+    python -m doctest -v sessions/lecture19/floats.txt
+
+>>> import numpy as np
+>>> big = np.float64(1e200)
+>>> with np.errstate(over="ignore", invalid="ignore"):
+...     print(big * big, big * big - big * big)
+inf nan
+>>> with np.errstate(over="raise"):
+...     big * big
+Traceback (most recent call last):
+  ...
+FloatingPointError: overflow encountered in scalar multiply
+>>> np.geterr()["over"]
+'warn'

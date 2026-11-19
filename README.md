@@ -26,6 +26,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-18-start` | start of Lecture 18: `src/attractor/modes.py`, the leading eigenvectors of the Gram matrix of Gray-Scott snapshots by `eigh` and by a randomised range finder; the range finder orthonormalises its repeated products only at the end, and in float32 it loses the subspace |
 | `lecture-18` | end of Lecture 18: the range finder orthonormalises after every product; `rsvd`, the randomised SVD of the coursework; tests against `eigh` on matrices with a known spectrum, with fixed seeds and principal angles; version 1.3.0 |
 | `lecture-19-start` | start of Lecture 19: the Oregonator model of the Belousov–Zhabotinsky reaction; RK4 at a fixed step overflows on it; `Adaptive` wraps SciPy's `solve_ivp`, with RK45 by default; `rk4_factor` written with powers; scripts that profile, line-profile and time the runs |
+| `lecture-19` | end of Lecture 19: `integrate` logs its steps and the first state that is not finite; the Jacobian of the Oregonator; `Adaptive` uses LSODA by default and passes the Jacobian to implicit methods; `rk4_factor` by Horner's rule; tests; the lecture notebook; version 1.4.0 |
 
 ## Documentation
 
@@ -117,7 +118,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `src/attractor/cli.py` | the console commands `attractor-simulate`, `attractor-periods` (the table of periods of the runs, `results/periods.csv`; `--plot FILE` for the figure) and `attractor-fit` (the lynx–hare fit) |
 | `src/attractor/datasets.py` | `load_run`, one chemostat run from its CSV file, and `lynx_hare`, the table in the package |
 | `src/attractor/models.py` | abstract class `DynamicalSystem` and the models `LotkaVolterra`, `RosenzweigMacArthur`, `Goodwin` and `Oregonator` (the Belousov–Zhabotinsky reaction); the factory functions of Lecture 9, registered by name; the chemostat parameters `CHEMOSTAT` |
-| `src/attractor/integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory`; `rk4_factor`, the factor by which one RK4 step multiplies the solution of dy/dt = λy; `Adaptive`, adaptive steps by SciPy's `solve_ivp` |
+| `src/attractor/integrators.py` | Euler and RK4 steps, `integrate`, and the classes `Euler` and `RK4`, whose `run` returns a `Trajectory`; `rk4_factor`, the factor by which one RK4 step multiplies the solution of dy/dt = λy; `Adaptive`, adaptive steps by SciPy's `solve_ivp`; `integrate` and `Adaptive` log to the logger `attractor.integrators` |
 | `src/attractor/cycles.py` | peak finder and cycle period |
 | `src/attractor/patterns.py` | the Gray-Scott reaction-diffusion model on periodic grids: Laplacian, initial state, time step, run; the last two axes are the grid, earlier axes a batch |
 | `src/attractor/modes.py` | leading eigenvectors of a symmetric matrix: snapshots of a Gray-Scott run and their Gram matrix, `eigh` with the largest eigenvalue first, the randomised range finder and eigensolver, principal angles between subspaces |
@@ -138,6 +139,8 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `sessions/lecture11/` | interpreter sessions of the Lecture 11 notes, checked with `python -m doctest sessions/lecture11/*.txt` |
 | `sessions/lecture10/` | interpreter sessions of the Lecture 10 notes, checked with `python -m doctest sessions/lecture10/*.txt` |
 | `sessions/lecture18/` | interpreter sessions of the Lecture 18 notes, checked with `python -m doctest sessions/lecture18/*.txt` |
+| `exercises/lecture19/` | scripts that check the answers to the exercises of Lecture 19 |
+| `sessions/lecture19/` | interpreter sessions of the Lecture 19 notes, checked with `python -m doctest sessions/lecture19/*.txt` |
 | `lecture10.ipynb` | the notebook of Lecture 10, run with the kernel `Python (attractor 3.13)` |
 | `lecture10-mine.ipynb` | the notebook of Lecture 10 as run in the lecture, with its outputs |
 | `lecture11.ipynb` | the notebook of Lecture 11, run with the same kernel |
@@ -147,6 +150,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `lecture15.ipynb` | the notebook of Lecture 15, run with the same kernel; the cells that change the code work in a temporary clone |
 | `lecture17.ipynb` | the notebook of Lecture 17: arrays, views and strides, broadcasting, the vectorised stencil, its cost and its stability |
 | `lecture18.ipynb` | the notebook of Lecture 18: the leading modes of a Gray-Scott run, `eigh` against the randomised eigensolver, the loss of the subspace in float32, tests with principal angles, the roofline of the lecture laptop |
+| `lecture19.ipynb` | standalone Lecture 19 notebook: tracing the RK4 overflow, profiling RK45 and checking a faster solver |
 | `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, the versions and locations of NumPy and `attractor`, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |

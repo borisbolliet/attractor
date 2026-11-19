@@ -229,6 +229,32 @@ class Oregonator(DynamicalSystem):
                          (-e - e * a + self.f * r) / self.s,
                          self.w * (a - r)])
 
+    def jacobian(self, t, y):
+        """Return the matrix of partial derivatives d(rhs_i)/d(y_j) at the state y.
+
+        For y of shape (3,), the result has shape (3, 3). For a batch of n
+        states, y of shape (3, n), it has shape (n, 3, 3).
+
+        Examples
+        --------
+        >>> m = Oregonator()
+        >>> m.jacobian(0.0, [1.0, 2.0, 3.0]).shape
+        (3, 3)
+        >>> m.jacobian(0.0, np.ones((3, 5))).shape
+        (5, 3, 3)
+        """
+        a, e, r = np.asarray(y, dtype=float)
+        s, q, w, f = self.s, self.q, self.w, self.f
+        J = np.zeros(np.shape(a) + (3, 3))     # one 3 x 3 matrix per state
+        J[..., 0, 0] = s * (1 - e - 2 * q * a)
+        J[..., 0, 1] = s * (1 - a)
+        J[..., 1, 0] = -e / s
+        J[..., 1, 1] = -(1 + a) / s
+        J[..., 1, 2] = f / s
+        J[..., 2, 0] = w
+        J[..., 2, 2] = -w
+        return J
+
 
 @runtime_checkable
 class HasRHS(Protocol):

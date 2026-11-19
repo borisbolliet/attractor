@@ -1,0 +1,13 @@
+Lecture 19, the amplification factor of one RK4 step, and the end of its stability interval.
+    python -m doctest -v sessions/lecture19/stability.txt
+
+>>> import numpy as np
+>>> from attractor.integrators import rk4_factor, rk4_step
+>>> lam, h = -1390.0, 0.01
+>>> y1 = rk4_step(lambda t, y: lam * y, 0.0, 1.0, h)
+>>> print(f"{y1:.4f} {rk4_factor(h * lam):.4f}")
+1191.5228 1191.5228
+>>> roots = np.roots([1 / 24, 1 / 6, 1 / 2, 1])
+>>> z = float(roots[np.isreal(roots)].real[0])
+>>> print(f"{z:.6f} {rk4_factor(z):.6f}")
+-2.785294 1.000000

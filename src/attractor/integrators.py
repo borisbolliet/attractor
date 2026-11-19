@@ -1,11 +1,16 @@
 """Fixed-step explicit integrators, and adaptive integration with SciPy.
 
 `integrate` returns the times and the states as arrays; `Euler(h).run`,
-`RK4(h).run` and `Adaptive(method).run` return a `Trajectory`.
+`RK4(h).run` and `Adaptive(method).run` return a `Trajectory`. The module
+logs to the logger "attractor.integrators".
 """
+import logging
+
 import numpy as np
 
 from .trajectory import Trajectory
+
+log = logging.getLogger(__name__)
 
 
 def euler_step(rhs, t, y, h):
@@ -92,10 +97,7 @@ def rk4_factor(z):
     >>> float(rk4_factor(-1.0)), float(rk4_factor(-3.0))
     (0.375, 1.375)
     """
-    z2 = z ** 2
-    z3 = z ** 3
-    z4 = z ** 4
-    return 1 + z + z2 / 2 + z3 / 6 + z4 / 24
+    return 1 + z * (1 + z * (1 / 2 + z * (1 / 6 + z * (1 / 24))))  # Horner's rule: * and + only
 
 
 def check_step(h, t0=0.0, t1=None):
@@ -172,15 +174,26 @@ def integrate(step, rhs, y0, t0, t1, h):
     ValueError
         If h is non-positive or NaN, or the interval cannot be divided into
         whole steps within the tolerance.
+
+    Notes
+    -----
+    The logger "attractor.integrators" records the number of steps at level
+    DEBUG, and at level WARNING the first step whose state is not finite.
     """
     n = check_step(h, t0, t1)
+    log.debug("%d steps of size %g from t = %g", n, h, t0)
     y = np.array(y0, dtype=float)
     ts, ys = [t0], [y]
     for i in range(n):
         y = step(rhs, t0 + i * h, y, h)
         ts.append(t0 + (i + 1) * h)
         ys.append(y)
-    return np.array(ts), np.array(ys)
+    t, y = np.array(ts), np.array(ys)
+    finite = np.isfinite(y.reshape(len(t), -1)).all(axis=1)
+    if not finite.all():
+        first = int(np.argmin(finite))  # the first False
+        log.warning("state not finite from step %d of %d, t = %g", first, n, t[first])
+    return t, y
 
 
 class Euler:
@@ -329,6 +342,9 @@ class RK4:
         return Trajectory(t, y, getattr(system, "names", ("x", "z")))
 
 
+IMPLICIT = ("Radau", "BDF", "LSODA")  # the methods of solve_ivp that use a Jacobian
+
+
 class Adaptive:
     """Integration with adaptive steps by scipy.integrate.solve_ivp.
 
@@ -338,7 +354,7 @@ class Adaptive:
     ----------
     method : str, optional
         A method of solve_ivp: "RK45" (explicit), or "Radau", "BDF" or
-        "LSODA" (implicit, for stiff equations). Default "RK45".
+        "LSODA" (implicit, for stiff equations). Default "LSODA".
     rtol, atol : float, optional
         Relative and absolute tolerances of the estimated local error
         (default 1e-6 for both).
@@ -348,9 +364,14 @@ class Adaptive:
     stats : dict
         After run: the numbers of steps, of evaluations of the right-hand
         side ("nfev"), of the Jacobian ("njev") and of LU decompositions ("nlu").
+
+    Notes
+    -----
+    For an implicit method, run passes the system's jacobian method to
+    solve_ivp when the system has one.
     """
 
-    def __init__(self, method="RK45", rtol=1e-6, atol=1e-6):
+    def __init__(self, method="LSODA", rtol=1e-6, atol=1e-6):
         self.method, self.rtol, self.atol = method, rtol, atol
         self.stats = {}
 
@@ -361,7 +382,7 @@ class Adaptive:
         ----------
         system : callable
             Function or object called as system(t, y). A names attribute
-            supplies the state names.
+            supplies the state names, and a jacobian method the Jacobian.
         y0 : array_like, shape (k,)
             Initial state at t0.
         t0, t1 : float
@@ -379,9 +400,14 @@ class Adaptive:
         """
         from scipy.integrate import solve_ivp  # optional dependency: the fit extra
 
+        options = {}
+        if self.method in IMPLICIT and hasattr(system, "jacobian"):
+            options["jac"] = system.jacobian
         sol = solve_ivp(system, (t0, t1), y0, method=self.method,
-                        rtol=self.rtol, atol=self.atol)
+                        rtol=self.rtol, atol=self.atol, **options)
         if not sol.success:
             raise RuntimeError(f"{self.method}: {sol.message}")
         self.stats = dict(steps=len(sol.t) - 1, nfev=sol.nfev, njev=sol.njev, nlu=sol.nlu)
+        log.info("%s: %d steps, %d evaluations of the right-hand side",
+                 self.method, self.stats["steps"], sol.nfev)
         return Trajectory(sol.t, sol.y.T, getattr(system, "names", ("x", "z")))
