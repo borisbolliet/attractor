@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         python: ["3.13", "3.14"]
-        extras: ["test", "test,fit"]
+        extras: ["test", "test,fit", "test,service"]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "attractor"
-version = "1.5.0.dev0"
+version = "1.5.0"
 description = "Predator-prey and chemical oscillators, integrators, cycle periods, reaction-diffusion patterns, their leading modes and a web explorer"
 readme = "README.md"
 license = "MIT"
@@ -14,9 +14,10 @@ dependencies = ["numpy>=1.26"]
 [project.optional-dependencies]
 fit = ["scipy>=1.11"]
 plot = ["matplotlib>=3.8"]
-test = ["pytest>=8", "pytest-cov>=6"]
+test = ["pytest>=8", "pytest-cov>=6", "httpx2"]
 docs = ["zensical>=0.1", "mkdocstrings-python>=2"]
 service = ["scipy>=1.11", "fastapi>=0.115", "uvicorn>=0.30"]
+postgres = ["psycopg[binary]>=3.2"]
 
 [project.scripts]
 attractor-simulate = "attractor.cli:simulate"

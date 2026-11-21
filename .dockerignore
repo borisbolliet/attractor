@@ -1,0 +1,15 @@
+# Not part of the build context: environments, history, build products and secrets.
+.venv*
+.git
+.github
+.env
+dist
+build
+**/*.egg-info
+**/__pycache__
+.pytest_cache
+.coverage
+results*
+site
+mutants
+*.ipynb

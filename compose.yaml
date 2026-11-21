@@ -1,0 +1,27 @@
+# The explorer and a PostgreSQL server: docker compose up --build
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://explorer:${POSTGRES_PASSWORD:?set it in .env}@db:5432/explorer
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:19
+    environment:
+      POSTGRES_USER: explorer
+      POSTGRES_DB: explorer
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set it in .env}
+    volumes:
+      - runs:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U explorer -d explorer"]
+      interval: 2s
+      retries: 15
+
+volumes:
+  runs:
