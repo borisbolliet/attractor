@@ -27,6 +27,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-18` | end of Lecture 18: the range finder orthonormalises after every product; `rsvd`, the randomised SVD of the coursework; tests against `eigh` on matrices with a known spectrum, with fixed seeds and principal angles; version 1.3.0 |
 | `lecture-19-start` | start of Lecture 19: the Oregonator model of the Belousov–Zhabotinsky reaction; RK4 at a fixed step overflows on it; `Adaptive` wraps SciPy's `solve_ivp`, with RK45 by default; `rk4_factor` written with powers; scripts that profile, line-profile and time the runs |
 | `lecture-19` | end of Lecture 19: `integrate` logs its steps and the first state that is not finite; the Jacobian of the Oregonator; `Adaptive` uses LSODA by default and passes the Jacobian to implicit methods; `rk4_factor` by Horner's rule; tests; the lecture notebook; version 1.4.0 |
+| `lecture-21-start` | start of Lecture 21: the Oregonator explorer of Lecture 20 as `attractor.service`, with its page and browser files as package data, the `service` extra and the command `attractor-serve`; version 1.5.0.dev0; a Dockerfile that copies the whole folder before installing, and no `.dockerignore`; in the container the server listens on 127.0.0.1 only |
 
 ## Documentation
 
@@ -113,7 +114,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | File | Role |
 |---|---|
 | `data/C1.csv` ... `data/C10.csv` | the ten runs; columns: time (days), algae (10^6 cells/ml), rotifers (animals/ml), egg ratio, eggs, dead animals, medium |
-| `pyproject.toml` | the package `attractor`: name, version, dependencies, the extras `fit` (SciPy), `plot` (Matplotlib), `test` (pytest, pytest-cov) and `docs` (Zensical, mkdocstrings), the console commands, the package data, the settings of pytest |
+| `pyproject.toml` | the package `attractor`: name, version, dependencies, the extras `fit` (SciPy), `plot` (Matplotlib), `test` (pytest, pytest-cov), `docs` (Zensical, mkdocstrings) and `service` (SciPy, FastAPI, Uvicorn), the console commands, the package data, the settings of pytest |
 | `src/attractor/__init__.py` | the public interface: the names listed in `__all__`, and `__version__` from the installed metadata |
 | `src/attractor/cli.py` | the console commands `attractor-simulate`, `attractor-periods` (the table of periods of the runs, `results/periods.csv`; `--plot FILE` for the figure) and `attractor-fit` (the lynx–hare fit) |
 | `src/attractor/datasets.py` | `load_run`, one chemostat run from its CSV file, and `lynx_hare`, the table in the package |
@@ -122,6 +123,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `src/attractor/cycles.py` | peak finder and cycle period |
 | `src/attractor/patterns.py` | the Gray-Scott reaction-diffusion model on periodic grids: Laplacian, initial state, time step, run; the last two axes are the grid, earlier axes a batch |
 | `src/attractor/modes.py` | leading eigenvectors of a symmetric matrix: snapshots of a Gray-Scott run and their Gram matrix, `eigh` with the largest eigenvalue first, the randomised range finder and eigensolver, principal angles between subspaces |
+| `src/attractor/service/` | the Oregonator explorer: the FastAPI application, its page and browser files (package data) and the console command `attractor-serve` |
 | `tests/` | the tests, run with `python -m pytest` from the repository root, together with the examples of the docstrings: unit tests of the integrators, properties of the models, the console commands; `conftest.py` holds the shared fixture |
 | `.github/workflows/ci.yml` | continuous integration on GitHub Actions: the tests on Python 3.13 and 3.14, each with and without the `fit` extra, then the documentation site |
 | `docs/`, `zensical.toml` | the pages of the documentation site and its configuration; the API reference is built from the docstrings: `zensical build`, then `zensical serve` to view it |
@@ -158,6 +160,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `requirements-lock.txt` | `pip freeze` snapshot, Python 3.13.11 on macOS arm64 (Python 3.12.12 up to `lecture-09`) |
 | `.env.example` | configuration template; copied to `.env` by `setup_env.sh` |
 | `setup_env.sh` | one-step setup, to be sourced |
+| `Dockerfile` | the image of the explorer: Python 3.13, the package with its `service` extra, `attractor-serve` as the command |
 | `.gitignore` | `.venv*/`, `.env`, `results*/`, `__pycache__/`, `.ipynb_checkpoints/`, the build products `build/`, `dist/`, `*.egg-info/`, `.coverage`, `site/`, `.cache/`, `mutants/` (also `.venv313` and `results-np1`, `results-np2` of the lecture) |
 
 ## Python 3.12 and the NumPy 1.26.4 wheels

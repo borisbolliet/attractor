@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oregonator explorer · C1 Research Computing</title><link rel="stylesheet" href="assets/style.css">
+<script src="assets/explorer.js" defer></script></head>
+<body><header><div class="wrap mast"><a href="https://teaching.borisbolliet.io/c1-2026/">C1 <span>Research Computing</span></a><a href="https://github.com/borisbolliet/attractor">Source on GitHub ↗</a></div></header>
+<main class="wrap"><h1>Oregonator explorer</h1><p class="intro">Follow three concentrations through a simulated Belousov–Zhabotinsky reaction.</p>
+<div class="work"><section class="graph" aria-labelledby="plot-title"><div class="plothead"><h2 id="plot-title">Concentration over time</h2>
+<label>Scale <select id="scale"><option value="log">Logarithmic</option><option value="linear">Linear</option></select></label></div>
+<ul class="legend"><li><i></i>α · HBrO₂</li><li><i></i>η · Br⁻</li><li><i></i>ρ · Ce(IV)</li></ul>
+<canvas id="plot" role="img" aria-label="Three scaled concentrations against model time"></canvas>
+<p id="summary" class="summary" aria-live="polite"></p></section>
+<aside><form id="settings"><h2>Simulation</h2>
+<label for="end">End time</label><input id="end" type="number" min="1" max="360" step="any" value="30" required>
+<small>1–360 model time units</small>
+<label for="factor">Stoichiometric factor <em>f</em></label><input id="factor" type="number" min="0.8" max="1.2" step="any" value="1" required>
+<small>0.8–1.2 · controls bromide production</small>
+<button id="run" type="submit">Run simulation <span aria-hidden="true">→</span></button>
+<p id="status" role="status"></p></form>
+<div class="initial"><h3>Initial concentrations</h3><p>α = 1 &nbsp; η = 2 &nbsp; ρ = 3</p><p>Solver <strong>BDF</strong></p></div></aside></div>
+<details><summary>View HTTP request</summary><pre id="request"></pre></details>
+<p><a href="docs">Interactive API documentation</a></p>
+</main></body></html>

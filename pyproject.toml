@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "attractor"
-version = "1.4.0"
-description = "Predator-prey and chemical oscillators, integrators, cycle periods, reaction-diffusion patterns and their leading modes"
+version = "1.5.0.dev0"
+description = "Predator-prey and chemical oscillators, integrators, cycle periods, reaction-diffusion patterns, their leading modes and a web explorer"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.13"
@@ -16,17 +16,20 @@ fit = ["scipy>=1.11"]
 plot = ["matplotlib>=3.8"]
 test = ["pytest>=8", "pytest-cov>=6"]
 docs = ["zensical>=0.1", "mkdocstrings-python>=2"]
+service = ["scipy>=1.11", "fastapi>=0.115", "uvicorn>=0.30"]
 
 [project.scripts]
 attractor-simulate = "attractor.cli:simulate"
 attractor-periods = "attractor.cli:periods"
 attractor-fit = "attractor.cli:fit"
+attractor-serve = "attractor.service.server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 attractor = ["data/*.csv"]
+"attractor.service" = ["static/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "src"]
