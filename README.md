@@ -29,6 +29,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-19` | end of Lecture 19: `integrate` logs its steps and the first state that is not finite; the Jacobian of the Oregonator; `Adaptive` uses LSODA by default and passes the Jacobian to implicit methods; `rk4_factor` by Horner's rule; tests; the lecture notebook; version 1.4.0 |
 | `lecture-21-start` | start of Lecture 21: the Oregonator explorer of Lecture 20 as `attractor.service`, with its page and browser files as package data, the `service` extra and the command `attractor-serve`; version 1.5.0.dev0; a Dockerfile that copies the whole folder before installing, and no `.dockerignore`; in the container the server listens on 127.0.0.1 only |
 | `lecture-21` | end of Lecture 21: the explorer records each run in SQLite or PostgreSQL (`DATABASE_URL`) and lists them at `/oregonator/runs`; `.dockerignore`; a Dockerfile that installs the pinned dependencies before the source; `compose.yaml` with a PostgreSQL server on a named volume; a workflow that publishes a release to TestPyPI and the GitHub Container Registry; version 1.5.0 |
+| `lecture-22-start` | start of Lecture 22: `src/attractor/spectrum.py`, spectra of sampled time series (uniform resampling, periodogram, dominant period, moving average); the moving average multiplies FFTs of the record's length, so that its first and last values wrap around |
 
 ## Documentation
 
@@ -124,6 +125,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `src/attractor/cycles.py` | peak finder and cycle period |
 | `src/attractor/patterns.py` | the Gray-Scott reaction-diffusion model on periodic grids: Laplacian, initial state, time step, run; the last two axes are the grid, earlier axes a batch |
 | `src/attractor/modes.py` | leading eigenvectors of a symmetric matrix: snapshots of a Gray-Scott run and their Gram matrix, `eigh` with the largest eigenvalue first, the randomised range finder and eigensolver, principal angles between subspaces |
+| `src/attractor/spectrum.py` | spectra of time series: resampling onto a uniform grid, periodogram, dominant period and moving average, along any axis of an array |
 | `src/attractor/service/` | the Oregonator explorer: the FastAPI application, its page and browser files (package data) and the console command `attractor-serve`; `store.py`, the record of runs in SQLite or PostgreSQL |
 | `tests/` | the tests, run with `python -m pytest` from the repository root, together with the examples of the docstrings: unit tests of the integrators, properties of the models, the console commands; `conftest.py` holds the shared fixture |
 | `.github/workflows/ci.yml` | continuous integration on GitHub Actions: the tests on Python 3.13 and 3.14, without extras and with the `fit` or the `service` extra, then the documentation site |
@@ -155,6 +157,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `lecture17.ipynb` | the notebook of Lecture 17: arrays, views and strides, broadcasting, the vectorised stencil, its cost and its stability |
 | `lecture18.ipynb` | the notebook of Lecture 18: the leading modes of a Gray-Scott run, `eigh` against the randomised eigensolver, the loss of the subspace in float32, tests with principal angles, the roofline of the lecture laptop |
 | `lecture19.ipynb` | standalone Lecture 19 notebook: tracing the RK4 overflow, profiling RK45 and checking a faster solver |
+| `lecture22.ipynb` | the notebook of Lecture 22: sampling and aliasing, the DFT and the periodogram, the cost of the FFT, leakage and windows, convolution and wrap-around, cross-correlation, and the periods and phase lags of the ten runs |
 | `sessions/lecture09/` | interpreter sessions of the Lecture 9 notes, checked with `python -m doctest sessions/lecture09/*.txt` |
 | `check_env.py` | interpreter, the versions and locations of NumPy and `attractor`, and the project variables |
 | `ask_llm.py` | sends `results/periods.csv` to an OpenAI-compatible endpoint (`LLM_BASE_URL`) and reports the shortest and longest periods |
