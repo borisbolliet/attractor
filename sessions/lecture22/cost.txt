@@ -1,0 +1,14 @@
+Lecture 22, the padded size and the operation counts of a long cross-correlation.
+    python -m doctest -v sessions/lecture22/cost.txt
+
+>>> import math
+>>> n = 525_600                                    # a minute for a year
+>>> N = 2 ** math.ceil(math.log2(2 * n - 1))       # room for all 2n - 1 lags
+>>> N
+2097152
+>>> round(n * n * 8 / 2 ** 30)                     # GiB, n x n float64 matrix
+2058
+>>> print(f"{n * n:.2e} {N * math.log2(N):.2e}")   # direct; one FFT
+2.76e+11 4.40e+07
+>>> round(n * n / (N * math.log2(N)), -2)
+6300.0

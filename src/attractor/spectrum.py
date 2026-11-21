@@ -6,6 +6,8 @@ along one axis of their array arguments, the last by default, so that
 several series of equal length, such as the algae and rotifer densities of
 one run, are transformed in one call.
 """
+import math
+
 import numpy as np
 
 
@@ -104,14 +106,53 @@ def dominant_period(f, power, shortest, longest, axis=-1):
 def moving_average(x, w, axis=-1):
     """Centred moving average over w samples, computed as a product of FFTs.
 
+    The result equals np.convolve(x, np.ones(w) / w, mode="same") along
+    axis: values beyond the two ends of the record count as zero. The
+    transforms have length N >= n + w - 1, so that the end of the series does
+    not wrap around onto its start.
+
     Examples
     --------
     >>> moving_average(np.array([3.0, 6.0, 9.0, 12.0]), 3)
-    array([7., 6., 9., 8.])
+    array([3., 6., 9., 7.])
     """
     x = np.moveaxis(np.asarray(x, dtype=float), axis, -1)
     n = x.shape[-1]
-    kernel = np.fft.rfft(np.ones(w) / w, n)
-    y = np.fft.irfft(np.fft.rfft(x) * kernel, n)
+    N = 2 ** math.ceil(math.log2(n + w - 1))  # room for all n + w - 1 sums
+    kernel = np.fft.rfft(np.ones(w) / w, N)
+    y = np.fft.irfft(np.fft.rfft(x, N) * kernel, N)
     lo = (w - 1) // 2  # w // 2 samples before the centre, (w - 1) // 2 after
-    return np.moveaxis(np.roll(y, -lo, axis=-1), -1, axis)
+    return np.moveaxis(y[..., lo:lo + n], -1, axis)
+
+
+def cross_correlation(x, y, axis=-1):
+    """Correlation of y against x at every lag, computed by FFT.
+
+    Both series are standardised (mean removed, divided by the standard
+    deviation). Then c[tau] is the sum of x[k] * y[k + tau] over the pairs
+    inside the record, divided by n. A maximum at tau > 0 means that y
+    follows x by tau samples.
+
+    Returns
+    -------
+    lags : numpy.ndarray of int, shape (2 n - 1,)
+        The lags -(n - 1), ..., n - 1.
+    c : numpy.ndarray
+        The correlation at each lag, along axis.
+
+    Examples
+    --------
+    >>> lags, c = cross_correlation([1.0, 2.0, 0.0, 0.0], [0.0, 1.0, 2.0, 0.0])
+    >>> int(lags[np.argmax(c)])
+    1
+    """
+    x = np.moveaxis(np.asarray(x, dtype=float), axis, -1)
+    y = np.moveaxis(np.asarray(y, dtype=float), axis, -1)
+    n = x.shape[-1]
+    xs = (x - x.mean(axis=-1, keepdims=True)) / x.std(axis=-1, keepdims=True)
+    ys = (y - y.mean(axis=-1, keepdims=True)) / y.std(axis=-1, keepdims=True)
+    N = 2 ** math.ceil(math.log2(2 * n - 1))  # room for all 2n - 1 lags
+    c = np.fft.irfft(np.fft.rfft(xs, N).conj() * np.fft.rfft(ys, N), N) / n
+    # the circular result holds lags 0 .. n - 1, then the negative lags
+    c = np.concatenate([c[..., N - n + 1:], c[..., :n]], axis=-1)
+    return np.arange(-(n - 1), n), np.moveaxis(c, -1, axis)

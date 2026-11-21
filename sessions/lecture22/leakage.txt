@@ -1,0 +1,20 @@
+Lecture 22, the period of an 8-day cycle sampled daily for 141 days: grid, zero padding and window.
+    python -m doctest -v sessions/lecture22/leakage.txt
+
+>>> import numpy as np
+>>> from attractor.spectrum import dominant_period, periodogram
+>>> np.hanning(5)
+array([0. , 0.5, 1. , 0.5, 0. ])
+>>> x = np.cos(2 * np.pi * np.arange(141) / 8.0)
+>>> 141 / 8                                        # cycles in the record
+17.625
+>>> f, p = periodogram(x, window=False)
+>>> float(dominant_period(f, p, 3, 20))            # grid point k = 18
+7.833333333333334
+>>> f, p = periodogram(x, n=4096, window=False)    # zero padding
+>>> float(dominant_period(f, p, 3, 20))
+8.0
+>>> f, q = periodogram(x, n=4096)                  # zero padding and Hann window
+>>> k = np.searchsorted(f, 0.25)                   # far from the peak
+>>> print(f"{p[k] / p.max():.1e} {q[k] / q.max():.1e}")
+4.0e-04 3.7e-09

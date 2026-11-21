@@ -1,0 +1,17 @@
+Lecture 22, run C1: the correlation of rotifers against algae near its maximum, and the phase of the cross-spectrum.
+    python -m doctest -v sessions/lecture22/phase.txt
+
+>>> import numpy as np
+>>> from attractor.spectrum import cross_correlation, fourier, uniform
+>>> d = np.genfromtxt("data/C1.csv", delimiter=",", skip_header=1,
+...                   usecols=(0, 1, 2))           # time, algae, rotifers
+>>> d = d[~np.isnan(d).any(axis=1)]
+>>> D = np.column_stack([uniform(d[:, 0], d[:, j])[1] for j in (1, 2)])
+>>> lags, c = cross_correlation(D[:, 0], D[:, 1])
+>>> c[(lags >= 1) & (lags <= 3)].round(2)          # lags of 1, 2 and 3 days
+array([ 0.4 ,  0.29, -0.03])
+>>> f, X = fourier(D, n=4096, axis=0)
+>>> S = X[:, 0] * X[:, 1].conj()                   # the cross-spectrum
+>>> k = np.argmax(np.abs(S) * ((f >= 1 / 20) & (f <= 1 / 3)))
+>>> round(float(1 / f[k]), 2), round(float(np.degrees(np.angle(S[k]))), 1)
+(7.01, 87.2)

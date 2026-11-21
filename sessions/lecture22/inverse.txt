@@ -1,0 +1,16 @@
+Lecture 22, the lengths of the inverse real transforms irfft and hfft.
+    python -m doctest -v sessions/lecture22/inverse.txt
+
+>>> import numpy as np
+>>> x = np.arange(13.0)
+>>> R = np.fft.rfft(x)
+>>> R.size                                         # 13 // 2 + 1
+7
+>>> np.fft.irfft(R).size, np.fft.irfft(R, n=13).size
+(12, 13)
+>>> np.allclose(np.fft.irfft(R, n=13), x)
+True
+>>> np.fft.hfft(R).size, np.fft.hfft(R, n=13).size
+(12, 13)
+>>> np.allclose(np.fft.hfft(R, n=13), 13 * np.fft.irfft(R.conj(), n=13))
+True

@@ -1,0 +1,30 @@
+Lecture 22, checks of the solutions to the exercises of the notes.
+    python -m doctest -v sessions/lecture22/solutions.txt
+
+>>> import math, numpy as np
+>>> from attractor.spectrum import moving_average
+>>> [np.fft.rfft(np.zeros(N)).size for N in (365, 366)]
+[183, 184]
+>>> x = np.zeros(366)
+>>> x.nbytes, np.fft.fft(x).nbytes, np.fft.rfft(x).nbytes
+(2928, 5856, 2944)
+>>> n = 6000
+>>> N = 2 ** math.ceil(math.log2(2 * n - 1))
+>>> N, round(n * n * 8 / 2 ** 30, 2), N * math.log2(N)
+(16384, 0.27, 229376.0)
+>>> round(n * n / (N * math.log2(N)), -1)
+160.0
+>>> D = np.random.default_rng(0).standard_normal((374, 2))
+>>> y = moving_average(D, 6, axis=0)
+>>> y.shape
+(374, 2)
+>>> bool(np.isclose(y[100, 0], D[97:103, 0].mean()))   # rows 97 to 102
+True
+>>> abs(16 - round(16 / 12) * 12)
+4
+>>> round(float(np.sin(np.pi / 7) / (12 * np.sin(np.pi / 84))), 3)
+0.967
+>>> round(360 * 2 / 9.5, 1), round(360 / 9.5, 1)
+(75.8, 37.9)
+>>> round(float(np.degrees(1.2)), 1), round(1.2 / (2 * np.pi) * 9.5, 2)
+(68.8, 1.81)

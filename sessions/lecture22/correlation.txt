@@ -1,0 +1,13 @@
+Lecture 22, the cross-correlation of two cycles, the lag of its maximum and the phase lag.
+    python -m doctest -v sessions/lecture22/correlation.txt
+
+>>> import numpy as np
+>>> from attractor.spectrum import cross_correlation
+>>> t = np.arange(60.0)                            # days
+>>> prey = np.cos(2 * np.pi * t / 7)
+>>> predator = np.cos(2 * np.pi * (t - 2) / 7)     # 2 days later
+>>> lags, c = cross_correlation(prey, predator)
+>>> lags.size, int(lags[np.argmax(c)])
+(119, 2)
+>>> 360 * 2 / 7                                    # degrees of a 7-day cycle
+102.85714285714286

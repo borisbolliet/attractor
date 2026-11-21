@@ -1,0 +1,12 @@
+Lecture 22, aliasing: daily samples of a cycle of 0.8 days are those of a cycle of 4 days.
+    python -m doctest -v sessions/lecture22/aliasing.txt
+
+>>> import numpy as np
+>>> t = np.arange(12.0)                            # twelve daily samples
+>>> fast = np.cos(2 * np.pi * t / 0.8)             # 1.25 cycles per day
+>>> slow = np.cos(2 * np.pi * t / 4.0)             # 0.25 cycles per day
+>>> np.allclose(fast, slow)
+True
+>>> f, fs = 1.25, 1.0
+>>> abs(f - round(f / fs) * fs)                    # frequency of the samples
+0.25

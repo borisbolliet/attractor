@@ -1,0 +1,25 @@
+Lecture 22, the discrete Fourier transform: frequencies, conjugate symmetry of a real series, bytes.
+    python -m doctest -v sessions/lecture22/dft.txt
+
+>>> import numpy as np
+>>> x = np.cos(2 * np.pi * 2 * np.arange(8) / 8)  # two cycles in eight samples
+>>> np.abs(np.fft.fft(x)).round(12)
+array([0., 0., 4., 0., 0., 0., 4., 0.])
+>>> np.fft.fftfreq(8)                              # cycles per sample
+array([ 0.   ,  0.125,  0.25 ,  0.375, -0.5  , -0.375, -0.25 , -0.125])
+>>> x = np.array([2.0, 0.0, 3.0, 0.0, 0.0, 1.0])
+>>> np.fft.fft(x).round(3)
+array([6.+0.j   , 1.-1.732j, 0.+3.464j, 4.+0.j   , 0.-3.464j, 1.+1.732j])
+>>> np.fft.rfft(x).round(3)
+array([6.+0.j   , 1.-1.732j, 0.+3.464j, 4.+0.j   ])
+>>> np.fft.rfftfreq(6)
+array([0.        , 0.16666667, 0.33333333, 0.5       ])
+>>> x = np.zeros(374)                              # one value per day of C1
+>>> x.dtype, x.nbytes
+(dtype('float64'), 2992)
+>>> X = np.fft.fft(x)
+>>> X.dtype, X.nbytes
+(dtype('complex128'), 5984)
+>>> R = np.fft.rfft(x)
+>>> R.size, R.nbytes
+(188, 3008)

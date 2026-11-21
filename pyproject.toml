@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "attractor"
-version = "1.5.0"
-description = "Predator-prey and chemical oscillators, integrators, cycle periods, reaction-diffusion patterns, their leading modes and a web explorer"
+version = "1.6.0"
+description = "Predator-prey and chemical oscillators, integrators, cycle periods, reaction-diffusion patterns, their leading modes, a web explorer and spectra of time series"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.13"

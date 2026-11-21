@@ -1,0 +1,23 @@
+Lecture 22, shapes through a periodogram along axis 0 of an array of two series.
+    python -m doctest -v sessions/lecture22/axes.txt
+
+>>> import numpy as np
+>>> from attractor.spectrum import periodogram, uniform
+>>> d = np.genfromtxt("data/C9.csv", delimiter=",", skip_header=1,
+...                   usecols=(0, 1, 2))           # time, algae, rotifers
+>>> d = d[~np.isnan(d).any(axis=1)]
+>>> D = np.column_stack([uniform(d[:, 0], d[:, j])[1] for j in (1, 2)])
+>>> D.shape                                        # days, then (algae, rotifers)
+(141, 2)
+>>> x = np.moveaxis(D, 0, -1)
+>>> x.shape
+(2, 141)
+>>> x.mean(axis=-1, keepdims=True).shape
+(2, 1)
+>>> np.hanning(141).shape
+(141,)
+>>> np.fft.rfft(x, n=4096).shape
+(2, 2049)
+>>> f, power = periodogram(D, n=4096, axis=0)
+>>> f.shape, power.shape
+((2049,), (2049, 2))

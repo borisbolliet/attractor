@@ -1,0 +1,30 @@
+Lecture 22, the sampling of a chemostat run: missing values, intervals and gaps, then a uniform grid.
+    python -m doctest -v sessions/lecture22/sampling.txt
+
+>>> import numpy as np
+>>> from attractor.spectrum import uniform
+>>> d = np.genfromtxt("data/C1.csv", delimiter=",", skip_header=1,
+...                   usecols=(0, 1, 2))           # time, algae, rotifers
+>>> d.shape
+(366, 3)
+>>> complete = ~np.isnan(d).any(axis=1)            # rows without a missing value
+>>> int(complete.sum())
+358
+>>> t, algae = d[complete, 0], d[complete, 1]
+>>> dt = np.diff(t)                                # days between samples
+>>> np.round([dt.min(), np.median(dt), dt.max()], 2)
+array([0.57, 1.01, 5.03])
+>>> int(np.sum(dt > 1.5)), float(t[np.argmax(dt)])
+(11, 341.98)
+>>> tu, au = uniform(t, algae)
+>>> tu[:3], tu.size
+(array([0.95, 1.95, 2.95]), 374)
+>>> uniform([0.0, 2.0, 1.0], [5.0, 6.0, 7.0])
+Traceback (most recent call last):
+  ...
+ValueError: sample times must increase strictly
+>>> from attractor.spectrum import dominant_period, periodogram
+>>> def period(x):
+...     return round(float(dominant_period(*periodogram(x, n=4096), 3, 20)), 2)
+>>> period(algae), period(au)                      # as daily; resampled
+(6.79, 6.99)

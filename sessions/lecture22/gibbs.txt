@@ -1,0 +1,18 @@
+Lecture 22, a sharp cut-off in frequency rings at a jump; a moving average does not.
+    python -m doctest -v sessions/lecture22/gibbs.txt
+
+>>> import numpy as np
+>>> x = (np.arange(400) % 200 < 100).astype(float)  # 100 ones, 100 zeros, twice
+>>> X = np.fft.rfft(x)
+>>> X[31:] = 0                                     # keep k <= 30
+>>> y = np.fft.irfft(X, n=400)
+>>> round(float(y.max()), 3), round(float(y.min()), 3)
+(1.09, -0.09)
+>>> z = np.convolve(x, np.ones(15) / 15, mode="same")
+>>> round(float(z.max()), 3), round(float(z.min()), 3)
+(1.0, 0.0)
+>>> x = (np.arange(4000) % 2000 < 1000).astype(float)  # a longer square wave
+>>> X = np.fft.rfft(x)
+>>> X[301:] = 0                                    # keep k <= 300
+>>> round(float(np.fft.irfft(X, n=4000).max()), 3)
+1.09

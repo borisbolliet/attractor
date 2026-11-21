@@ -1,0 +1,16 @@
+Lecture 22, circular and linear convolution: wrap-around, zero padding and the centred slice.
+    python -m doctest -v sessions/lecture22/convolution.txt
+
+>>> import numpy as np
+>>> x = np.array([3.0, 6.0, 9.0, 12.0])
+>>> k = np.ones(3) / 3                             # a 3-sample moving average
+>>> np.convolve(x, k)                              # all 4 + 3 - 1 = 6 sums
+array([1., 3., 6., 9., 7., 4.])
+>>> np.fft.irfft(np.fft.rfft(x) * np.fft.rfft(k, 4), 4)
+array([8., 7., 6., 9.])
+>>> np.fft.irfft(np.fft.rfft(x, 8) * np.fft.rfft(k, 8), 8)
+array([1., 3., 6., 9., 7., 4., 0., 0.])
+>>> np.convolve(x, k, mode="same")                 # the 4 centred sums
+array([3., 6., 9., 7.])
+>>> [(w, (w - 1) // 2, w // 2) for w in range(3, 9)]
+[(3, 1, 1), (4, 1, 2), (5, 2, 2), (6, 2, 3), (7, 3, 3), (8, 3, 4)]

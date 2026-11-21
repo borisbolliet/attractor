@@ -30,6 +30,7 @@ The state of the project at each lecture is a tag, checked out with
 | `lecture-21-start` | start of Lecture 21: the Oregonator explorer of Lecture 20 as `attractor.service`, with its page and browser files as package data, the `service` extra and the command `attractor-serve`; version 1.5.0.dev0; a Dockerfile that copies the whole folder before installing, and no `.dockerignore`; in the container the server listens on 127.0.0.1 only |
 | `lecture-21` | end of Lecture 21: the explorer records each run in SQLite or PostgreSQL (`DATABASE_URL`) and lists them at `/oregonator/runs`; `.dockerignore`; a Dockerfile that installs the pinned dependencies before the source; `compose.yaml` with a PostgreSQL server on a named volume; a workflow that publishes a release to TestPyPI and the GitHub Container Registry; version 1.5.0 |
 | `lecture-22-start` | start of Lecture 22: `src/attractor/spectrum.py`, spectra of sampled time series (uniform resampling, periodogram, dominant period, moving average); the moving average multiplies FFTs of the record's length, so that its first and last values wrap around |
+| `lecture-22` | end of Lecture 22: the moving average padded to N >= n + w - 1 and tested against `np.convolve`; `cross_correlation`, padded to N >= 2n - 1; tests, `experiments/fft_cost.py` and the sessions of the notes; version 1.6.0 |
 
 ## Documentation
 
@@ -125,7 +126,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `src/attractor/cycles.py` | peak finder and cycle period |
 | `src/attractor/patterns.py` | the Gray-Scott reaction-diffusion model on periodic grids: Laplacian, initial state, time step, run; the last two axes are the grid, earlier axes a batch |
 | `src/attractor/modes.py` | leading eigenvectors of a symmetric matrix: snapshots of a Gray-Scott run and their Gram matrix, `eigh` with the largest eigenvalue first, the randomised range finder and eigensolver, principal angles between subspaces |
-| `src/attractor/spectrum.py` | spectra of time series: resampling onto a uniform grid, periodogram, dominant period and moving average, along any axis of an array |
+| `src/attractor/spectrum.py` | spectra of time series: resampling onto a uniform grid, periodogram, dominant period, moving average and cross-correlation, along any axis of an array |
 | `src/attractor/service/` | the Oregonator explorer: the FastAPI application, its page and browser files (package data) and the console command `attractor-serve`; `store.py`, the record of runs in SQLite or PostgreSQL |
 | `tests/` | the tests, run with `python -m pytest` from the repository root, together with the examples of the docstrings: unit tests of the integrators, properties of the models, the console commands; `conftest.py` holds the shared fixture |
 | `.github/workflows/ci.yml` | continuous integration on GitHub Actions: the tests on Python 3.13 and 3.14, without extras and with the `fit` or the `service` extra, then the documentation site |
@@ -135,7 +136,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `puzzles/` | short scripts on names, calls, scopes, closures and imports (Lecture 9) |
 | `exercises/lecture09/` | scripts that check the answers to the exercises of Lecture 9 |
 | `src/attractor/tools.py` | decorators `counted`, `timed` and `register`, and `REGISTRY`, the model factories by name; `median_time`, the median time of repeated calls after an untimed one |
-| `experiments/` | scripts of Lectures 10, 11 and 19; with the project installed they also run as files from any folder |
+| `experiments/` | scripts of Lectures 10, 11, 19 and 22; with the project installed they also run as files from any folder |
 | `exercises/lecture10/` | scripts that check the answers to the exercises of Lecture 10 |
 | `src/attractor/trajectory.py` | class `Trajectory`: the times and states of one run |
 | `src/attractor/data/lynx_hare.csv` | lynx and snowshoe hare pelts traded by the Hudson's Bay Company, 1900–1920, in thousands; package data read by `attractor.lynx_hare()` |
@@ -147,6 +148,7 @@ the directories configured in `pyproject.toml`, which exclude this file.
 | `sessions/lecture18/` | interpreter sessions of the Lecture 18 notes, checked with `python -m doctest sessions/lecture18/*.txt` |
 | `exercises/lecture19/` | scripts that check the answers to the exercises of Lecture 19 |
 | `sessions/lecture19/` | interpreter sessions of the Lecture 19 notes, checked with `python -m doctest sessions/lecture19/*.txt` |
+| `sessions/lecture22/` | interpreter sessions of the Lecture 22 notes, checked with `python -m doctest sessions/lecture22/*.txt` |
 | `lecture10.ipynb` | the notebook of Lecture 10, run with the kernel `Python (attractor 3.13)` |
 | `lecture10-mine.ipynb` | the notebook of Lecture 10 as run in the lecture, with its outputs |
 | `lecture11.ipynb` | the notebook of Lecture 11, run with the same kernel |

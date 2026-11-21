@@ -1,0 +1,20 @@
+Lecture 22, the periodogram of the algae of run C9: the grid of 141 days, then zero padding and a Hann window.
+    python -m doctest -v sessions/lecture22/chemostat.txt
+
+>>> import numpy as np
+>>> from attractor.spectrum import dominant_period, periodogram, uniform
+>>> d = np.genfromtxt("data/C9.csv", delimiter=",", skip_header=1,
+...                   usecols=(0, 1, 2))           # time, algae, rotifers
+>>> d = d[~np.isnan(d).any(axis=1)]
+>>> t, algae = uniform(d[:, 0], d[:, 1])
+>>> t.size
+141
+>>> f, p = periodogram(algae, window=False)
+>>> float(f[1])                                    # 1/141 cycles per day
+0.0070921985815602835
+>>> (1 / f[17:20]).round(2)                        # periods for k = 17 to 19
+array([8.29, 7.83, 7.42])
+>>> float(dominant_period(f, p, 3, 20))
+7.833333333333334
+>>> round(float(dominant_period(*periodogram(algae, n=4096), 3, 20)), 3)
+8.016

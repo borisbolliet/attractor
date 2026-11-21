@@ -1,0 +1,14 @@
+Lecture 22, the discrete Fourier transform as a matrix-vector product.
+    python -m doctest -v sessions/lecture22/matrix.txt
+
+>>> import numpy as np
+>>> N = 8
+>>> k = np.arange(N)
+>>> W = np.exp(-2j * np.pi * np.outer(k, k) / N)  # W[k, n] = exp(-2 pi i kn/N)
+>>> x = np.random.default_rng(0).standard_normal(N)
+>>> np.allclose(W @ x, np.fft.fft(x))
+True
+>>> W.shape, W.dtype, W.nbytes
+((8, 8), dtype('complex128'), 1024)
+>>> 4096 ** 2 * 16 / 2 ** 20                       # MiB of W for N = 4096
+256.0

@@ -11,3 +11,5 @@
 ::: attractor.patterns
 
 ::: attractor.modes
+
+::: attractor.spectrum
